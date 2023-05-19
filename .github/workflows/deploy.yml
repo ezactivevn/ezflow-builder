@@ -1,0 +1,21 @@
+name: Deploy to Firebase
+
+on:
+  workflow_dispatch:
+    inputs:
+      firebase_project_id:
+        description: 'Firebase Project ID'
+        required: true
+
+extends:
+  - .github/workflows/base.yml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add more steps specific to your deployment to Firebase

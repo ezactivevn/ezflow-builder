@@ -1,9 +1,17 @@
-name: Clone Repository
+
+name: Clone Workflow
+
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      github_token:
+        description: 'GitHub Token'
+        required: true
+
+extends:
+  - .github/workflows/base.yml
+
 
 jobs:
   clone:
