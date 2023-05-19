@@ -16,6 +16,7 @@ jobs:
           repository: ezactivevn/ezleague
           token: ${{ secrets.PAT_TOKEN }}  # Replace with the name of your secret
           path: ezleague
+          ref: develop
 
       - name: List files
         run: ls -R ezleague
