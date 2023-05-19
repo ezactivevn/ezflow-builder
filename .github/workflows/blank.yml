@@ -15,4 +15,16 @@ jobs:
         with:
           repository: ezactivevn/ezleague
           token: ${{ secrets.PAT_TOKEN }}  # Replace with the name of your secret
+          branch: develop
+
+      - name: run script
+        run: |
+          cd ezleague
+          npm install
+          npm run build
+          npm run start
+
+
+
+
 
