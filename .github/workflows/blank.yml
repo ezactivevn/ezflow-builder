@@ -1,4 +1,4 @@
-name: Docker Action
+name: Clone Repository
 
 on:
   push:
@@ -6,15 +6,11 @@ on:
       - main
 
 jobs:
-  build:
+  clone:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Build Docker image
-        run: docker build -t myimage .
-
-      - name: Run Docker container
-        run: docker run myimage
+        with:
+          repository: https://github.com/ezactivevn/ezleague.git
