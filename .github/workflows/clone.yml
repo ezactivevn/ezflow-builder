@@ -1,20 +1,13 @@
 
 name: Clone Workflow
-
-
 on:
-  workflow_dispatch:
-    inputs:
-      github_token:
-        description: 'GitHub Token'
-        required: true
-
-extends:
-  - .github/workflows/base.yml
-
+  push:
+    branches:
+      - main
 
 jobs:
   clone:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
