@@ -13,4 +13,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          repository: https://github.com/ezactivevn/ezleague.git
+          repository: ezactivevn/ezleague
