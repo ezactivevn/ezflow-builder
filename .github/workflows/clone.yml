@@ -1,9 +1,5 @@
 
 name: Clone Workflow
-on:
-  push:
-    branches:
-      - main
 
 jobs:
   clone:
