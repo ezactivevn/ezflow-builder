@@ -11,7 +11,14 @@ jobs:
   build:
     runs-on: ubuntu-latest  # Change the runner if needed
 
+
+
     steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x  # Replace "x" with the desired Python version
+
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -20,11 +27,6 @@ jobs:
 
     - name: list files
       run: ls -R
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x  # Replace "x" with the desired Python version
 
     - name: Run Python script
       run: cd .. && python runscript.py  # Replace "your_script.py" with the name of your Python script
