@@ -24,7 +24,7 @@ jobs:
         token: ${{ secrets.PAT_TOKEN }}
 
     - name: List files
-      run: ls -R
+      run: cd .. && ls -R
 
     - name: Run Python script
-      run: cd .. && python runscript.py
+      run:  python runscript.py
