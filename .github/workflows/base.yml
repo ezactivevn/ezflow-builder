@@ -27,4 +27,5 @@ jobs:
         python-version: 3.x  # Replace "x" with the desired Python version
 
     - name: Run Python script
-      run: python runscript.py  # Replace "your_script.py" with the name of your Python script
+      run: cd .. 
+          python runscript.py  # Replace "your_script.py" with the name of your Python script
