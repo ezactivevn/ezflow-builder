@@ -11,8 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest  # Change the runner if needed
 
-
-
     steps:
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -25,8 +23,8 @@ jobs:
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
-    - name: list files
+    - name: List files
       run: ls -R
 
     - name: Run Python script
-      run: cd .. && python runscript.py  # Replace "your_script.py" with the name of your Python script
+      run: cd .. && python runscript.py
