@@ -18,6 +18,9 @@ jobs:
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
+    - name: list files
+      run: ls -R
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
