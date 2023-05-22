@@ -18,8 +18,8 @@ jobs:
     - name: Check Github User
       run: |
         git --version
-        git config user.name 'MyUsername'
-        git config user.email 'MyEmail'
+        git config user.name 'Phu Hoang'
+        git config user.email 'mchoang98@gmail.com'
         git config user.name
         git config user.email
       env:
