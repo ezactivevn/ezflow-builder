@@ -34,5 +34,5 @@ jobs:
     - name: Run Python script
       run:  python runscript.py
 
-    - name: list files
-      run: ls -a
+    - name: list client
+      run: ls client
