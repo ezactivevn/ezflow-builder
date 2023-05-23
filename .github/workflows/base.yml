@@ -33,3 +33,6 @@ jobs:
 
     - name: Run Python script
       run:  python runscript.py
+
+    - name: list files
+      run: ls -a
