@@ -20,8 +20,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
+        ref: ezflow_deploy
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
+
 
     - name: 
       run: cd ..  # Change this to your folder name if necessary
