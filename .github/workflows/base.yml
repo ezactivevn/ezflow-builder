@@ -32,7 +32,7 @@ jobs:
       run: ls -a
 
     - name: Run Python script
-      run:  python runscript.py
+      run:  python runscript.py ezleague  # Change this to your script name if necessary
 
     - name: list client
       run: ls client
