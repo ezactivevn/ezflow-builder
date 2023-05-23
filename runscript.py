@@ -1,6 +1,10 @@
 import subprocess
 
-checkout_branch('develop', 'ezleague')
+
+
+def run_script(script):
+    subprocess.call(script, shell=True)
+
 
 run_script('cd ezleague/client && npm install --legacy-peer-deps && npm run build')
 
