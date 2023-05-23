@@ -23,8 +23,11 @@ jobs:
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
-    - name: List files
-      run: cd .. && ls -R
+    - name: 
+      run: cd ..  # Change this to your folder name if necessary
+
+    - name: list files
+      run: ls -a
 
     - name: Run Python script
       run:  python runscript.py
