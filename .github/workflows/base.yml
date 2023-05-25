@@ -37,7 +37,7 @@ jobs:
         pip install requests
 
     - name: Run Python script
-      run:  python runscript.py ezleague  # Change this to your script name if necessary
+      run:  python runscript.py ezleague23  # Change this to your script name if necessary
 
     - name: list client
       run: ls client
