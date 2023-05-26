@@ -16,7 +16,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.x  # Replace "x" with the desired Python version
-
+    - name: Checkout code
+      uses: actions/setup-node@v1
+      with:
+        node-version: '16.x'
+    
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -41,3 +45,22 @@ jobs:
 
     - name: list client
       run: ls client
+
+  deploy_firebase:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ezflow_deploy
+          repository: ezactivevn/ezleague
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Install Firebase CLI
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only site --token ${{ secrets.FIREBASE_TOKEN }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
