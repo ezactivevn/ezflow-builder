@@ -59,7 +59,7 @@ jobs:
       run: ls client
 
     - name: Create Firebase site
-    run: gcloud firebase projects:create my-project --site-id ${{ steps.site_id.outputs.site_id }}
+      run: gcloud firebase projects:create my-project --site-id ${{ steps.site_id.outputs.site_id }}
 
     - name: Deploy Firebase site
-    run: gcloud firebase deploy --only hosting:site_id --project my-project --source client
+      run: gcloud firebase deploy --only hosting:site_id --project my-project --source client
