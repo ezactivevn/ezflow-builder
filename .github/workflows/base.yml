@@ -33,7 +33,7 @@ jobs:
         token: ${{ secrets.PAT_TOKEN }}
     
     - name: Authenticate with Firebase
-      uses: google-actions/gcloud@v0.6.0
+      uses: google/actions/gcloud@v0.7.0
       with:
         service_account_file: service_account_file.json
 
