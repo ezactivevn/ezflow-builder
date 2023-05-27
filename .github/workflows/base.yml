@@ -55,7 +55,7 @@ jobs:
       run: ls client
 
     - name: add Service account firebase
-      uses: firebase/firebase-actions/setup-firebase@v1
+      uses: w9jds/firebase-action@master
       with:
         firebase-version: '9.16.6'
         credentials: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
