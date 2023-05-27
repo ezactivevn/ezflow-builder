@@ -31,11 +31,7 @@ jobs:
         ref: ezflow_deploy
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
-    
-    - name: Authenticate with Firebase
-      uses: firebase/firebase-actions/setup@v1
-      with:
-        service_account_file: service_account_file.json
+
 
 
     - name: 
@@ -58,8 +54,16 @@ jobs:
     - name: list client
       run: ls client
 
-    - name: Create Firebase site
-      run:  firebase hosting:sites:create ${{ steps.site_id.outputs.site_id }} --token ${{ secrets.FIREBASE_TOKEN }}
+    - name: add Service account firebase
+      uses: firebase/firebase-actions/setup-firebase@v1
+      with:
+        firebase-version: '9.16.6'
+        credentials: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-    - name: Deploy Firebase site
-      run: firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
+    - name: create hostings:sites
+      run: firebase hosting:sites:create ${{ steps.site_id.outputs.site_id }} ${{ github.event.inputs.app_name }} --project ${{ secrets.FIREBASE_PROJECT_ID }}
+
+    - name: Deploy to Firebase
+      run: firebase deploy --only hosting --project ${{ secrets.FIREBASE_PROJECT_ID }}
+
+   
