@@ -59,6 +59,8 @@ jobs:
       with:
         firebase-version: '9.16.6'
         credentials: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
     - name: create hostings:sites
       run: firebase hosting:sites:create ${{ steps.site_id.outputs.site_id }} ${{ github.event.inputs.app_name }} --project ${{ secrets.FIREBASE_PROJECT_ID }}
