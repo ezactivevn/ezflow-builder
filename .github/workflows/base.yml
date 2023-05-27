@@ -31,6 +31,11 @@ jobs:
         ref: ezflow_deploy
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
+    
+    - name: Authenticate with Firebase
+      uses: google-actions/gcloud@v0.6.0
+      with:
+        service_account_file: service_account_file.json
 
 
     - name: 
@@ -48,6 +53,13 @@ jobs:
 
     - name: Run Python script
       run:  python runscript.py ${{ github.event.inputs.app_name }}
+      id: site_id
 
     - name: list client
       run: ls client
+
+    - name: Create Firebase site
+    run: gcloud firebase projects:create my-project --site-id ${{ steps.site_id.outputs.site_id }}
+
+    - name: Deploy Firebase site
+    run: gcloud firebase deploy --only hosting:site_id --project my-project --source client
