@@ -1,11 +1,15 @@
 name: Python Workflow
 on:
-  push:
-    branches:
-      - main  # Change this to your branch name if necessary
-  pull_request:
-    branches:
-      - main  # Change this to your branch name if necessary
+  # dispatch
+  workflow_dispatch: # Manually trigger the workflow
+    inputs:
+      app_name:
+        description: 'Application name'
+        required: true
+        default: 'unknown'
+
+  
+
 
 jobs:
   build:
@@ -41,28 +45,7 @@ jobs:
         pip install requests
 
     - name: Run Python script
-      run:  python runscript.py ezleague23  # Change this to your script name if necessary
+      run:  python runscript.py ${{ github.event.inputs.app_name }}
 
     - name: list client
       run: ls client
-
-  deploy_firebase:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-          with:
-            ref: ezflow_deploy
-            repository: ezactivevn/ezleague
-            token: ${{ secrets.PAT_TOKEN }}
-        
-        - name: list files
-          run: ls -l
-
-        - name: Install Firebase CLI
-          uses: w9jds/firebase-action@master
-          with:            
-            args: deploy --only site --only ezleague/client --token ${{ secrets.FIREBASE_TOKEN }}
-          env:
-            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
