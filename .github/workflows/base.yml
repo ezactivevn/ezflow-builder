@@ -28,6 +28,8 @@ jobs:
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
+    - name: add GOOGLE_APPLICATION_CREDENTIALS 
+      run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
 
     - name: 
       run: cd ..  # Change this to your folder name if necessary
@@ -45,24 +47,3 @@ jobs:
 
     - name: list client
       run: ls client
-
-  deploy_firebase:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-          with:
-            ref: ezflow_deploy
-            repository: ezactivevn/ezleague
-            token: ${{ secrets.PAT_TOKEN }}
-        
-        - name: list files
-          run: ls -l
-
-        - name: Install Firebase CLI
-          uses: w9jds/firebase-action@master
-          with:            
-            args: deploy --only site --only ezleague/client --token ${{ secrets.FIREBASE_TOKEN }}
-          env:
-            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
