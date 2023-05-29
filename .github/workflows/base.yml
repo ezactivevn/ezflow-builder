@@ -35,7 +35,8 @@ jobs:
     - name: add GOOGLE_APPLICATION_CREDENTIALS 
       run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
 
-
+    - name: log GOOGLE_APPLICATION_CREDENTIALS 
+      run: echo $GOOGLE_APPLICATION_CREDENTIALS
 
     - name: 
       run: cd ..  # Change this to your folder name if necessary
