@@ -28,7 +28,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: ezflow_deploy
+        ref: ezleague_demo
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
