@@ -32,6 +32,13 @@ jobs:
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
 
+    # docker
+    - name: Install Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker-ce docker-ce-cli containerd.io
+    
+    
     - name: add GOOGLE_APPLICATION_CREDENTIALS 
       run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
 
