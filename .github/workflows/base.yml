@@ -92,7 +92,7 @@ jobs:
         sudo docker-compose --version
     
     - name: Run Python script
-      run:  python runscript.py ${{ github.event.inputs.app_name }}
+      run:  python runscript.py ${{ github.event.inputs.app_name }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ secrets.USERNAME }} ${{ secrets.EMAIL }}
 
     - name: Set Output
       id: set_output
