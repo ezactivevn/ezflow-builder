@@ -23,8 +23,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: ezleague_demo
-        repository: ezactivevn/ezleague
+        ref: master
+        repository: ${{ github.event.inputs.repo_url }}
         token: ${{ secrets.PAT_TOKEN }}
 
     - name: Set up Git
