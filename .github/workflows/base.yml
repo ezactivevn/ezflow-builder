@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest  # Change the runner if needed
 
     steps:
     - name: Set up Python
@@ -29,6 +29,16 @@ jobs:
         ref: ezleague_demo
         repository: ezactivevn/ezleague
         token: ${{ secrets.PAT_TOKEN }}
+
+    - name: Set up Git
+      run: |
+        git config --global user.name $USERNAME
+        git config --global user.email "$USERNAME@users.noreply.github.com"
+    
+    - name: Authenticate with GitHub
+      env:
+        TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: echo "machine github.com login $USERNAME password $TOKEN" > ~/.netrc
 
 
     - name: add GOOGLE_APPLICATION_CREDENTIALS 
