@@ -40,6 +40,17 @@ jobs:
         TOKEN: ${{ secrets.PAT_TOKEN }}
       run: echo "machine github.com login ${{secrets.USERNAME}} password $TOKEN" > ~/.netrc
 
+    - name : add PAT_TOKEN
+      run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+
+    - name: log PAT_TOKEN
+      run: echo $PAT_TOKEN
+
+    - name : add FIREBASE_TOKEN
+      run: export FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}
+
+    - name: log FIREBASE_TOKEN
+      run: echo $FIREBASE_TOKEN
 
     - name: add GOOGLE_APPLICATION_CREDENTIALS 
       run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
