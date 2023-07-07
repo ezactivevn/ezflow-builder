@@ -93,14 +93,10 @@ jobs:
     
     - name: Run Python script
       run:  python runscript.py ${{ github.event.inputs.app_name }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ secrets.USERNAME }} ${{ secrets.EMAIL }}
-
-    - name: Set Output
-      id: set_output
-      run: |
-        echo "::set-output name=repo_url::$(cat output.txt)"
-
-    - name: Use Output
-      run: echo ${{ steps.set_output.outputs.repo_url }}
+      
+    - name: Set output from result.txt
+      id: set-output
+      run: echo "::set-output name=repo_url::$(cat result.txt)"
 
   server:
     runs-on: self-hosted
@@ -113,7 +109,7 @@ jobs:
         run: echo "machine github.com login ${{secrets.USERNAME}} password $TOKEN" > ~/.netrc
       
       - name: Clone project
-        run: git clone ${{ needs.build.outputs.repo_url }} server
+        run: git clone ${{ needs.build.outputs.repo_url }}
 
       - name: Install composer
         run: |
