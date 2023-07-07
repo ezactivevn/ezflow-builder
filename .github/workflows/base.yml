@@ -32,7 +32,7 @@ jobs:
 
     - name: Set up Git
       run: |
-        git config --global user.name ${{ secrets.USERNAME }}}
+        git config --global user.name ${{ secrets.USERNAME }}
         git config --global user.email ${{ secrets.EMAIL }}
     
     - name: Authenticate with GitHub
