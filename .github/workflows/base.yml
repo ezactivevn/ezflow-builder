@@ -93,7 +93,29 @@ jobs:
     
     - name: Run Python script
       run:  python runscript.py ${{ github.event.inputs.app_name }}
-      id: site_id
 
-    - name: list client
-      run: ls client
+    - name: Set Output
+      id: set_output
+      run: |
+        echo "::set-output name=repo_url::$(cat output.txt)"
+
+    - name: Use Output
+      run: echo ${{ steps.set_output.outputs.repo_url }}
+
+  server:
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - name: Authenticate with GitHub
+        env:
+          TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: echo "machine github.com login ${{secrets.USERNAME}} password $TOKEN" > ~/.netrc
+      
+      - name: Clone project
+        run: git clone ${{ needs.build.outputs.repo_url }} server
+
+      - name: Install composer
+        run: |
+          cd server
+          composer install
