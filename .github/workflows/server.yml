@@ -1,4 +1,4 @@
-name: Python Workflow
+name: Server Workflow
 on:
   # dispatch
   workflow_dispatch: # Manually trigger the workflow
