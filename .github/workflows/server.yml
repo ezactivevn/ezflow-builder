@@ -67,6 +67,9 @@ jobs:
     - name: list files
       run: ls -a
 
+    - name: Remove folder server
+      run: sudo rm -rf /var/www/html/${{ github.event.inputs.app_name }}
+
     - name: Copy folder server to /var/www/html/
       run: sudo cp -r server /var/www/html/${{ github.event.inputs.app_name }}
 
