@@ -30,7 +30,15 @@ jobs:
     - name: Set up Git
       run: |
         git config --global user.name ${{ vars.USERNAME }}
-        git config --global user.email ${{ secrets.EMAIL }}
+        git config --global user.email ${{ vars.EMAIL }}
+
+        
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: master
+        repository: ${{ github.event.inputs.repo_url }}
+        token: ${{ secrets.PAT_TOKEN }}
     
     - name: Authenticate with GitHub
       env:
