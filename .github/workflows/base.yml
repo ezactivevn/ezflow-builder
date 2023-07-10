@@ -32,13 +32,13 @@ jobs:
 
     - name: Set up Git
       run: |
-        git config --global user.name ${{ secrets.USERNAME }}
-        git config --global user.email ${{ secrets.EMAIL }}
+        git config --global user.name Phu Hoang
+        git config --global user.email ${{ vars.EMAIL }}
     
     - name: Authenticate with GitHub
       env:
         TOKEN: ${{ secrets.PAT_TOKEN }}
-      run: echo "machine github.com login ${{secrets.USERNAME}} password $TOKEN" > ~/.netrc
+      run: echo "machine github.com login ${{vars.USERNAME}} password $TOKEN" > ~/.netrc
 
     - name : add PAT_TOKEN
       run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
@@ -92,7 +92,7 @@ jobs:
         sudo docker-compose --version
     
     - name: Run Python script
-      run:  python runscript.py ${{ github.event.inputs.app_name }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ secrets.USERNAME }} ${{ secrets.EMAIL }}
+      run:  python runscript.py ${{ github.event.inputs.app_name }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
 
 
