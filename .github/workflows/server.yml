@@ -79,11 +79,11 @@ jobs:
     - name: Change permission of /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chmod -R 755 /var/www/html/${{ github.event.inputs.app_name }}
 
-    - name: Change directory to /var/www/html/
-      run: cd /var/www/html/${{ github.event.inputs.app_name }}
+    - name: Run composer install in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_name }}
 
-    - name: Install dependencies
-      run: composer install --ignore-platform-reqs
+    - name: List files in /var/www/html/
+      run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
 
         
 
