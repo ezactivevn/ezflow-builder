@@ -67,6 +67,9 @@ jobs:
     - name: list files
       run: ls -a
 
+    - name: login as root
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S su
+
     - name: Remove folder server
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_name }}
 
