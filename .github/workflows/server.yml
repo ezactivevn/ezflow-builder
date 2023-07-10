@@ -68,16 +68,16 @@ jobs:
       run: ls -a
 
     - name: Remove folder server
-      run: rm -rf /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_name }}
 
     - name: Copy folder server to /var/www/html/
-      run: sudo cp -r server /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_name }}
 
     - name: Change owner of /var/www/html/
-      run: sudo chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}
 
     - name: Change permission of /var/www/html/
-      run: sudo chmod -R 755 /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chmod -R 755 /var/www/html/${{ github.event.inputs.app_name }}
 
     - name: Change directory to /var/www/html/
       run: cd /var/www/html/${{ github.event.inputs.app_name }}
