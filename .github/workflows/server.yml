@@ -89,9 +89,15 @@ jobs:
 
     - name: Change permission of /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chmod -R 755 /var/www/html/${{ github.event.inputs.app_name }}
+    
+    - name: Change permission of /var/www/html/uploads
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chmod -R 777 /var/www/html/${{ github.event.inputs.app_name }}/uploads
+
+    - name: Change permission of /var/www/html/create_db.py
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chmod -R 777 /var/www/html/${{ github.event.inputs.app_name }}/create_db.py
 
     - name: run python create_db.py in /var/www/html/
-      run: python /var/www/html/${{ github.event.inputs.app_name }}/create_db.py
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S python /var/www/html/${{ github.event.inputs.app_name }}/create_db.py
         
 
     - name: Run composer install in /var/www/html/
