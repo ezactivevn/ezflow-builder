@@ -86,9 +86,9 @@ jobs:
 
     - name: list files in /var/www/html/
       run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
-      
+
     - name: run python create_db.py in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S python /var/www/html/${{ github.event.inputs.app_name }}/create_db.py
+      run: python /var/www/html/${{ github.event.inputs.app_name }}/create_db.py
         
 
     - name: Run composer install in /var/www/html/
