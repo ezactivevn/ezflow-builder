@@ -92,10 +92,16 @@ jobs:
 
     - name: run python create_db.py in /var/www/html/
       run: cd /var/www/html/${{ github.event.inputs.app_name }} && python createDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
-        
+    
 
     - name: Run composer install in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_name }}
+
+    - name: change owner of /var/www/html/public
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}/public
+
+    - name: change owner of /var/www/html/storage
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}/storage
 
     - name: Run generate key in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan key:generate
