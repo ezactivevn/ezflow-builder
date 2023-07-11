@@ -90,9 +90,8 @@ jobs:
     - name: copy .env.example to .env
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp /var/www/html/${{ github.event.inputs.app_name }}/.env.example /var/www/html/${{ github.event.inputs.app_name }}/.env
 
-    - name: run python create_db.py in /var/www/html/
-      run: cd /var/www/html/${{ github.event.inputs.app_name }} && python createDB.py ${{ github.event.inputs.app_name }}
-        
+    - name: run python createDB.py in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S python /var/www/html/${{ github.event.inputs.app_name }}/createDB.py
 
     - name: Run composer install in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_name }}
