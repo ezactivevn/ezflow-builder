@@ -115,6 +115,9 @@ jobs:
     - name: List files in /var/www/html/
       run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
 
+    - name: run python updateDB.py in /var/www/html/
+      run: cd /var/www/html/${{ github.event.inputs.app_name }} && python updateDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
+
         
 
 
