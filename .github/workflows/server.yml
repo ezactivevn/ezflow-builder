@@ -79,6 +79,9 @@ jobs:
     - name: list files in /var/www/html/
       run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
 
+    - name: copy env.txt to .env
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp /var/www/html/${{ github.event.inputs.app_name }}/env.txt /var/www/html/${{ github.event.inputs.app_name }}/.env
+
     - name: run python create_db.py in /var/www/html/
       run: cd /var/www/html/${{ github.event.inputs.app_name }} && python createDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
     
