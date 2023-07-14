@@ -82,6 +82,6 @@ jobs:
           end
           ' > fastlane/Fastfile
 
-          cd client/ios/App && fastlane deployios
+          fastlane deployios
 
 
