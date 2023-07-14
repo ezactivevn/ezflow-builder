@@ -19,6 +19,10 @@ on:
             description: 'Apple ID'
             required: true
             default: 'app'
+          app_name:
+            description: 'App Name'
+            required: true
+            default: 'new_app'
           repository:
             description: 'Repository'
             required: true
@@ -57,6 +61,7 @@ jobs:
         env:
           APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
           TEAM_ID: ${{ github.event.inputs.team_id }}
+          APP_NAME: ${{ github.event.inputs.app_name }}
           ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -75,10 +80,11 @@ jobs:
             team_id = ENV["TEAM_ID"]
             itc_team_id = ENV["ITC_TEAM_ID"]
             apple_id = ENV["APPLE_ID"]
+            app_name = ENV["APP_NAME"]
 
             # Create a new app on App Store Connect
             produce(
-              app_name: "EZ " + app_identifier,
+              app_name: app_name,
               app_identifier: app_identifier,
               language: "English",
               app_version: "1.0",
