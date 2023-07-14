@@ -54,10 +54,22 @@ jobs:
         run: ls -la
             
       - name: Set environment variables
-        run: export APP_IDENTIFIER=${{ github.event.inputs.app_identifier }} && export TEAM_ID=${{ github.event.inputs.team_id }} && export ITC_TEAM_ID=${{ github.event.inputs.itc_team_id }} && export APPLE_ID=${{ github.event.inputs.apple_id }} && export FASTLANE_PASSWORD=${{ secrets.FASTLANE_PASSWORD }} && export FASTLANE_SESSION=${{ secrets.FASTLANE_SESSION }} && export FASTLANE_USER=${{ secrets.FASTLANE_USER }} && export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.APP_SPECIFIC_PASSWORD }}
-
-
-      - name: Deploy IOS
+        env:
+          APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
+          TEAM_ID: ${{ github.event.inputs.team_id }}
+          ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
+          APPLE_ID: ${{ github.event.inputs.apple_id }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+        run: 
+          echo ${{ secrets.FASTLANE_PASSWORD }} > fastlane/.env
+          echo ${{ secrets.FASTLANE_SESSION }} >> fastlane/.env
+          echo ${{ secrets.FASTLANE_USER }} >> fastlane/.env
+          echo ${{ secrets.APP_SPECIFIC_PASSWORD }} >> fastlane/.env
+          cat fastlane/.env
+      - name: Deploy IOS 
         run: |
           cd client/ios/App && mkdir fastlane
 
