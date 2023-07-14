@@ -71,40 +71,60 @@ jobs:
           
           platform :ios do
             lane :deployios do
-              # Use the environment variables
-              app_identifier = ENV["APP_IDENTIFIER"]
-              team_id = ENV["TEAM_ID"]
-              itc_team_id = ENV["ITC_TEAM_ID"]
-              apple_id = ENV["APPLE_ID"]
-          
-              cert(
-                development: true,
-                username: apple_id
-              )
-              sigh
+            app_identifier = ENV["APP_IDENTIFIER"]
+            team_id = ENV["TEAM_ID"]
+            itc_team_id = ENV["ITC_TEAM_ID"]
+            apple_id = ENV["APPLE_ID"]
 
-              # create an app in App Store Connect
-              produce(
-                username: apple_id,
-                app_name: EZ + app_identifier,
-                app_identifier: app_identifier,
-                language: "en-US",
-                app_version: "1.0.0",
-                sku: app_identifier,
-                team_name: team_id,
-                itc_team_id: itc_team_id
-              )
-
-              # Build and upload to App Store Connect
-              gym(
-                scheme: "App",
-                export_method: "app-store",
-              )
-
-              # Upload to TestFlight
-              pilot(
-                username: apple_id
-              )
+            # Create a new app on App Store Connect
+            produce(
+              app_name: "App",
+              app_identifier: app_identifier,
+              language: "English",
+              app_version: "1.0",
+              sku: "1",
+              team_id: team_id,
+              itc_team_id: itc_team_id,
+              username: apple_id
+            )
+        
+            match(
+              app_identifier: app_identifier,
+              type: "appstore",
+              readonly: true,
+              username: apple_id
+            )
+        
+            # Build and upload to App Store Connect
+            gym(
+              scheme: "App",
+              export_method: "app-store",
+              export_options: {
+                uploadBitcode: true,
+                uploadSymbols: true
+              }
+            )
+        
+            # Upload to TestFlight
+            pilot(
+              skip_waiting_for_build_processing: true,
+              distribute_external: true,
+              username: apple_id
+            )
+        
+            # Submit to App Store Connect
+            deliver(
+              skip_waiting_for_build_processing: true,
+              force: true,
+              username: apple_id
+            )
+        
+            # Upload to App Store Connect
+            upload_to_app_store(
+              skip_waiting_for_build_processing: true,
+              force: true,
+              username: apple_id
+            )
 
               
 
