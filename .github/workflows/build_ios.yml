@@ -1,0 +1,59 @@
+name: Deploy IOS
+
+on:
+  workflow_dispatch: # Manually trigger the workflow
+        inputs: 
+          app_identifier:
+            description: 'App Identifier'
+            required: true
+            default: 'com.example.app'
+          team_id:
+            description: 'Team ID'
+            required: true
+            default: 'XXXXXXXXXX'
+          itc_team_id:
+            description: 'ITC Team ID'
+            required: true
+            default: 'XXXXXXXXXX'
+          apple_id:
+            description: 'Apple ID'
+            required: true
+            default: 'app'
+          repository:
+            description: 'Repository'
+            required: true
+            default: 'app'
+          branch:
+            description: 'Branch'
+            required: true
+            default: 'main'
+           
+
+
+jobs:
+  build:
+    runs-on: macos-latest
+                
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          repository: ${{ github.event.inputs.repository }}
+          token: ${{ secrets.PAT_TOKEN }}
+  
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+  
+      - name: Install Fastlane
+        run: gem install fastlane -NV
+            
+      - name: Run Fastlane
+        env:
+          APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
+          TEAM_ID: ${{ github.event.inputs.team_id }}
+          ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
+          APPLE_ID: ${{ github.event.inputs.apple_id }}
+        run: cd client/ios && fastlane ios beta
