@@ -51,14 +51,16 @@ jobs:
         with:
           ruby-version: 2.7
   
-      - name: Install Fastlane
-        run: gem install fastlane -NV
-
+     
       - name: Install CocoaPods
         run: gem install cocoapods
       
       - name: Install dependencies
-        run: cd client/ios/App && rm -rf Podfile.lock && pod install
+        run: cd client/ios/App && rm -rf Podfile.lock && rm -rf Pods && pod install
+
+      - name: Install Fastlane
+        run: gem install fastlane -NV
+
 
       - name: list files
         run: ls -la
