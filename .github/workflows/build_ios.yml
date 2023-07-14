@@ -78,7 +78,7 @@ jobs:
 
             # Create a new app on App Store Connect
             produce(
-              app_name: "App",
+              app_name: "EZ " + app_identifier,
               app_identifier: app_identifier,
               language: "English",
               app_version: "1.0",
