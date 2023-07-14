@@ -97,7 +97,7 @@ jobs:
           default_platform(:ios)
           match :appstore, type: 'appstore'
           match :development, type: 'development'
-          ' > client/ios/App/fastlane/Matchfile
+          ' > fastlane/Matchfile
 
           echo '
           default_platform(:ios)
