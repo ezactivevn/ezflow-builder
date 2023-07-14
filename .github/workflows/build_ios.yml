@@ -56,4 +56,28 @@ jobs:
           TEAM_ID: ${{ github.event.inputs.team_id }}
           ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
-        run: cd client/ios && fastlane ios beta
+        run: |
+          fastlane init
+          echo '
+          default_platform(:ios)
+          
+          platform :ios do
+            lane : deployios do
+              # Use the environment variables
+              app_identifier = ENV["APP_IDENTIFIER"]
+              team_id = ENV["TEAM_ID"]
+              itc_team_id = ENV["ITC_TEAM_ID"]
+              apple_id = ENV["APPLE_ID"]
+          
+              # Custom actions or tasks using the above variables
+              # Example: Building and distributing your app
+              sh("xcodebuild ...") # Replace with your build commands
+          
+              sh("fastlane pilot ...") # Replace with your distribution commands
+            end
+          end
+          ' > Fastfile
+          
+          fastlane deployios
+
+
