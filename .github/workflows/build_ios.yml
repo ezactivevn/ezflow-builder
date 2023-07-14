@@ -93,8 +93,22 @@ jobs:
               itc_team_id: itc_team_id,
               username: apple_id
             )
-            cert
-            sigh
+            cert(
+              development: false,
+              username: apple_id
+            )
+            sigh(
+              app_identifier: app_identifier,
+              username: apple_id
+            )
+            get_certificates(
+              username: apple_id
+            )
+            get_provisioning_profile(
+              app_identifier: app_identifier,
+              username: apple_id
+            )
+
             increment_build_number(xcodeproj: "App.xcodeproj")
             enable_automatic_code_signing(path: "App.xcodeproj")
         
