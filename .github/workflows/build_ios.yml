@@ -105,16 +105,16 @@ jobs:
             app_name = ENV["APP_NAME"]
 
             # Create a new app on App Store Connect
-            produce(
-              app_name: app_name,
-              app_identifier: app_identifier,
-              language: "English",
-              app_version: "1.0",
-              sku: app_identifier,
-              team_id: team_id,
-              itc_team_id: itc_team_id,
-              username: apple_id
-            )
+            # produce(
+            #   app_name: app_name,
+            #   app_identifier: app_identifier,
+            #   language: "English",
+            #   app_version: "1.0",
+            #   sku: app_identifier,
+            #   team_id: team_id,
+            #   itc_team_id: itc_team_id,
+            #   username: apple_id
+            # )
             cert(
               development: false,
               username: apple_id
