@@ -73,11 +73,55 @@ jobs:
               itc_team_id = ENV["ITC_TEAM_ID"]
               apple_id = ENV["APPLE_ID"]
           
-              # Custom actions or tasks using the above variables
-              # Example: Building and distributing your app
-              sh("xcodebuild ...") # Replace with your build commands
-          
-              sh("fastlane pilot ...") # Replace with your distribution commands
+              # Create certificates and provisioning profiles
+              match(
+                type: "appstore",
+                app_identifier: app_identifier,
+                team_id: team_id,
+                itc_team_id: itc_team_id,
+                readonly: true,
+                force: true
+              )
+
+              # Build and upload to App Store Connect
+              gym(
+                scheme: "App",
+                export_method: "app-store",
+                export_options: {
+                  uploadBitcode: true,
+                  uploadSymbols: true,
+                  compileBitcode: true,
+                  provisioningProfiles: {
+                    app_identifier => "match AppStore #{app_identifier}"
+                  }
+                }
+              )
+
+              # Upload to TestFlight
+              pilot(
+                skip_waiting_for_build_processing: true,
+                skip_submission: true,
+                distribute_external: true,
+                username: apple_id
+              )
+
+              # Upload to App Store Connect
+              deliver(
+                skip_waiting_for_build_processing: true,
+                skip_submission: true,
+                force: true,
+                username: apple_id
+              )
+
+              # Submit to App Store Connect
+              upload_to_app_store(
+                skip_waiting_for_build_processing: true,
+                skip_submission: true,
+                force: true,
+                username: apple_id
+              )
+
+
             end
           end
           ' > fastlane/Fastfile
