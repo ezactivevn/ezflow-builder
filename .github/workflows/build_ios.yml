@@ -87,7 +87,6 @@ jobs:
           ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
           SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
@@ -111,6 +110,9 @@ jobs:
               apple_id = ENV["APPLE_ID"]
               app_name = ENV["APP_NAME"]
 
+              SPACESHIP_2FA_ENABLED=false
+              session = fastlane spaceship login --username $APPLE_ID --password $APPLE_PASSWORD
+
               # Create a new app on App Store Connect
               # produce(
               #   app_name: app_name,
@@ -123,10 +125,10 @@ jobs:
               #   username: apple_id
               # )
 
-              cert(username: apple_id)
-              sigh(app_identifier: app_identifier, username: apple_id)
-              get_certificates(username: apple_id)
-              get_provisioning_profile(app_identifier: app_identifier, username: apple_id)
+              cert(session: session)
+              sigh(app_identifier: app_identifier, session: session)
+              get_certificates(session: session)
+              get_provisioning_profile(app_identifier: app_identifier, session: session)
 
               increment_build_number(xcodeproj: "App.xcodeproj")
               enable_automatic_code_signing(path: "App.xcodeproj")
@@ -145,21 +147,21 @@ jobs:
               pilot(
                 skip_waiting_for_build_processing: true,
                 distribute_external: true,
-                username: apple_id
+                session: session
               )
 
               # Submit to App Store Connect
               deliver(
                 skip_waiting_for_build_processing: true,
                 force: true,
-                username: apple_id
+                session: session
               )
 
               # Upload to App Store Connect
               upload_to_app_store(
                 skip_waiting_for_build_processing: true,
                 force: true,
-                username: apple_id
+                session: session
               )
             end
           end
