@@ -19,10 +19,6 @@ on:
             description: 'Apple ID'
             required: true
             default: 'app'
-          app_name:
-            description: 'App Name'
-            required: true
-            default: 'app'
           repository:
             description: 'Repository'
             required: true
