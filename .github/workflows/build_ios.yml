@@ -64,11 +64,8 @@ jobs:
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: 
-          echo ${{ secrets.FASTLANE_PASSWORD }} > fastlane/.env
-          echo ${{ secrets.FASTLANE_SESSION }} >> fastlane/.env
-          echo ${{ secrets.FASTLANE_USER }} >> fastlane/.env
-          echo ${{ secrets.APP_SPECIFIC_PASSWORD }} >> fastlane/.env
-          cat fastlane/.env
+          echo "Updating environment variables finished"
+
       - name: Deploy IOS 
         run: |
           cd client/ios/App && mkdir fastlane
