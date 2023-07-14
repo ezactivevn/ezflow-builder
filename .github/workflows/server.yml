@@ -95,6 +95,9 @@ jobs:
     - name: change owner of /var/www/html/storage
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}/storage
 
+    - name: run storage:link
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan storage:link
+
     - name: Run generate key in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan key:generate
 
