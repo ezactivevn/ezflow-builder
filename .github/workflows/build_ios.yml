@@ -94,13 +94,6 @@ jobs:
               username: apple_id
             )
         
-            match(
-              app_identifier: app_identifier,
-              type: "appstore",
-              readonly: true,
-              username: apple_id
-            )
-        
             # Build and upload to App Store Connect
             gym(
               scheme: "App",
