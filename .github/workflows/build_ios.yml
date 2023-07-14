@@ -60,8 +60,8 @@ jobs:
           ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
         run: |
-          cd client/ios/App 
-          mkdir fastlane
+          cd client/ios/App && mkdir fastlane
+
           echo '
           default_platform(:ios)
           
@@ -80,8 +80,8 @@ jobs:
               sh("fastlane pilot ...") # Replace with your distribution commands
             end
           end
-          ' > Fastfile
-          
-          fastlane deployios
+          ' > fastlane/Fastfile
+
+          cd client/ios/App && fastlane deployios
 
 
