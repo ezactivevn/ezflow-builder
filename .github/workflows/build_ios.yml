@@ -58,7 +58,7 @@ jobs:
           APPLE_ID: ${{ github.event.inputs.apple_id }}
         run: |
           cd client/ios/App 
-          fastlane init
+          mkdir fastlane
           echo '
           default_platform(:ios)
           
