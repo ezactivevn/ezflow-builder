@@ -82,6 +82,7 @@ jobs:
           end
           ' > fastlane/Fastfile
 
+          ls -la
           fastlane deployios
 
 
