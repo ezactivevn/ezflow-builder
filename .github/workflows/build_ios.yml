@@ -109,9 +109,11 @@ jobs:
               itc_team_id = ENV["ITC_TEAM_ID"]
               apple_id = ENV["APPLE_ID"]
               app_name = ENV["APP_NAME"]
-
+              fastlane_username = ENV["FASTLANE_USER"]
+              fastlane_password = ENV["FASTLANE_PASSWORD"]
+              
               SPACESHIP_2FA_ENABLED=false
-              session = fastlane spaceship login --username $APPLE_ID --password $APPLE_PASSWORD
+              session = fastlane spaceship login --username fastlane_username --password fastlane_password 
 
               # Create a new app on App Store Connect
               # produce(
