@@ -95,81 +95,74 @@ jobs:
 
           echo '
           default_platform(:ios)
+          match :appstore, type: 'appstore'
+          match :development, type: 'development'
+          ' > client/ios/App/fastlane/Matchfile
+
+          echo '
+          default_platform(:ios)
           
           platform :ios do
             lane :deployios do
-            app_identifier = ENV["APP_IDENTIFIER"]
-            team_id = ENV["TEAM_ID"]
-            itc_team_id = ENV["ITC_TEAM_ID"]
-            apple_id = ENV["APPLE_ID"]
-            app_name = ENV["APP_NAME"]
+              app_identifier = ENV["APP_IDENTIFIER"]
+              team_id = ENV["TEAM_ID"]
+              itc_team_id = ENV["ITC_TEAM_ID"]
+              apple_id = ENV["APPLE_ID"]
+              app_name = ENV["APP_NAME"]
 
-            # Create a new app on App Store Connect
-            # produce(
-            #   app_name: app_name,
-            #   app_identifier: app_identifier,
-            #   language: "English",
-            #   app_version: "1.0",
-            #   sku: app_identifier,
-            #   team_id: team_id,
-            #   itc_team_id: itc_team_id,
-            #   username: apple_id
-            # )
-            cert(
-              development: false,
-              username: apple_id
-            )
-            sigh(
-              app_identifier: app_identifier,
-              username: apple_id
-            )
-            get_certificates(
-              username: apple_id
-            )
-            get_provisioning_profile(
-              app_identifier: app_identifier,
-              username: apple_id
-            )
+              # Create a new app on App Store Connect
+              # produce(
+              #   app_name: app_name,
+              #   app_identifier: app_identifier,
+              #   language: "English",
+              #   app_version: "1.0",
+              #   sku: app_identifier,
+              #   team_id: team_id,
+              #   itc_team_id: itc_team_id,
+              #   username: apple_id
+              # )
 
-            increment_build_number(xcodeproj: "App.xcodeproj")
-            enable_automatic_code_signing(path: "App.xcodeproj")
-        
-            # Build and upload to App Store Connect
-            gym(
-              scheme: "App",
-              export_method: "app-store",
-              export_options: {
-                uploadBitcode: true,
-                uploadSymbols: true
-              }
-            )
-        
-            # Upload to TestFlight
-            pilot(
-              skip_waiting_for_build_processing: true,
-              distribute_external: true,
-              username: apple_id
-            )
-        
-            # Submit to App Store Connect
-            deliver(
-              skip_waiting_for_build_processing: true,
-              force: true,
-              username: apple_id
-            )
-        
-            # Upload to App Store Connect
-            upload_to_app_store(
-              skip_waiting_for_build_processing: true,
-              force: true,
-              username: apple_id
-            )
+              cert(username: apple_id)
+              sigh(app_identifier: app_identifier, username: apple_id)
+              get_certificates(username: apple_id)
+              get_provisioning_profile(app_identifier: app_identifier, username: apple_id)
 
-              
+              increment_build_number(xcodeproj: "App.xcodeproj")
+              enable_automatic_code_signing(path: "App.xcodeproj")
 
+              # Build and upload to App Store Connect
+              gym(
+                scheme: "App",
+                export_method: "app-store",
+                export_options: {
+                  uploadBitcode: true,
+                  uploadSymbols: true
+                }
+              )
 
+              # Upload to TestFlight
+              pilot(
+                skip_waiting_for_build_processing: true,
+                distribute_external: true,
+                username: apple_id
+              )
+
+              # Submit to App Store Connect
+              deliver(
+                skip_waiting_for_build_processing: true,
+                force: true,
+                username: apple_id
+              )
+
+              # Upload to App Store Connect
+              upload_to_app_store(
+                skip_waiting_for_build_processing: true,
+                force: true,
+                username: apple_id
+              )
             end
           end
+
           ' > fastlane/Fastfile
 
           ls -la
