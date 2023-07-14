@@ -73,7 +73,10 @@ jobs:
               itc_team_id = ENV["ITC_TEAM_ID"]
               apple_id = ENV["APPLE_ID"]
           
-              cert
+              cert(
+                development: true,
+                username: apple_id
+              )
               sigh
 
               # create an app in App Store Connect
