@@ -129,7 +129,7 @@ jobs:
       - name: Send mail failer
       
         
-        run: python send_mail.py ${{ github.event.inputs.app_name }} fail
+        run: python sendmail.py ${{ github.event.inputs.app_name }} fail
 
 
 
