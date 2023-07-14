@@ -59,6 +59,7 @@ jobs:
           TEAM_ID: ${{ github.event.inputs.team_id }}
           ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
         run: |
           cd client/ios/App && mkdir fastlane
 
