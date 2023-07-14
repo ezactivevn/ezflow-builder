@@ -54,6 +54,12 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane -NV
 
+      - name: Install CocoaPods
+        run: gem install cocoapods
+      
+      - name: Install dependencies
+        run: pod install
+
       - name: list files
         run: ls -la
             
