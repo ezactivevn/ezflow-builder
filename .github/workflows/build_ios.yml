@@ -66,7 +66,7 @@ jobs:
           default_platform(:ios)
           
           platform :ios do
-            lane : deployios do
+            lane :deployios do
               # Use the environment variables
               app_identifier = ENV["APP_IDENTIFIER"]
               team_id = ENV["TEAM_ID"]
