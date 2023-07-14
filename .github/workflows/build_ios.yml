@@ -82,7 +82,7 @@ jobs:
               app_identifier: app_identifier,
               language: "English",
               app_version: "1.0",
-              sku: "1",
+              sku: app_identifier,
               team_id: team_id,
               itc_team_id: itc_team_id,
               username: apple_id
