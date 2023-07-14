@@ -73,26 +73,19 @@ jobs:
               itc_team_id = ENV["ITC_TEAM_ID"]
               apple_id = ENV["APPLE_ID"]
           
-              # Create certificates and provisioning profiles
-              match(
-                type: "appstore",
-                app_identifier: app_identifier,
-                team_id: team_id,
-                itc_team_id: itc_team_id,
-                readonly: true,
-                force: true
-              )
+              cert
+              sigh
 
               # create an app in App Store Connect
               produce(
-                app_name: "EZ " + app_identifier,
+                username: apple_id,
+                app_name: "EZ #{app_identifier}",
                 app_identifier: app_identifier,
                 language: "en-US",
-                app_version: "1.0",
+                app_version: "1.0.0",
                 sku: app_identifier,
-                team_id: team_id,
-                itc_team_id: itc_team_id,
-                username: apple_id
+                team_name: team_id,
+                itc_team_id: itc_team_id
               )
 
               # Build and upload to App Store Connect
