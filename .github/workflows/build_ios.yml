@@ -58,7 +58,7 @@ jobs:
         run: gem install cocoapods
       
       - name: Install dependencies
-        run: pod install
+        run: cd ios/App && pod install
 
       - name: list files
         run: ls -la
