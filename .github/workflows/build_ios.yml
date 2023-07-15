@@ -46,20 +46,20 @@ jobs:
           repository: ${{ github.event.inputs.repository }}
           token: ${{ secrets.PAT_TOKEN }}
 
-      # - name: rm ios
-      #   run: rm -rf client/ios
+      - name: rm ios
+        run: rm -rf client/ios
 
-      # - name: Install capacitor
-      #   run: npm install -g @capacitor/cli
+      - name: Install capacitor
+        run: npm install -g @capacitor/cli
 
-      # - name: Install dependencies
-      #   run: cd client && npm install --legacy-peer-deps
+      - name: Install dependencies
+        run: cd client && npm install --legacy-peer-deps
 
-      # - name: Build IOS
-      #   run: cd client && npx cap add ios
+      - name: Build IOS
+        run: cd client && npx cap add ios
 
-      # - name: Generate resources
-      #   run: cd client && npx capacitor-assets generate
+      - name: Generate resources
+        run: cd client && npx capacitor-assets generate
  
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
