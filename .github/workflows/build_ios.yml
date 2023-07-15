@@ -134,7 +134,7 @@ jobs:
                   app_identifier: app_identifier,
                   username: apple_id,
                   api_key_path: api_key_path,
-                  api_key_id: ENV["APP_STORE_CONNECT_KEY_ID"],  # Add the key ID as a GitHub secret
+                  api_key: ENV["APP_STORE_CONNECT_KEY_ID"],  # Add the key ID as a GitHub secret
                   issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"]  # Add the issuer ID as a GitHub secret
                 )
             
