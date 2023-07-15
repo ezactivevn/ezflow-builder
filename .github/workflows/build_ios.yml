@@ -117,7 +117,7 @@ jobs:
                 itc_team_id = ENV["ITC_TEAM_ID"]
                 apple_id = ENV["APPLE_ID"]
                 app_name = ENV["APP_NAME"]
-                api_key_path = "./fastlane/AuthKey.p8"  # Path to the API key file
+                api_key_path = "./AuthKey.p8"  # Path to the API key file
             
                 # ...
             
