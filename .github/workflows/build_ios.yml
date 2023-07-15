@@ -113,9 +113,13 @@ jobs:
               fastlane_password = ENV["FASTLANE_PASSWORD"]
               
               SPACESHIP_2FA_ENABLED=false
-              session = do
-                fastlane spaceship login --username fastlane_username --password fastlane_password
-              end
+              fastlane_password = ENV["FASTLANE_PASSWORD"]
+
+
+              session = nil
+              SPACESHIP_2FA_ENABLED=false
+
+              session = fastlane spaceship login --username fastlane_username --password fastlane_password
 
 
               # Create a new app on App Store Connect
