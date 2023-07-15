@@ -119,7 +119,7 @@ jobs:
               session = nil
               SPACESHIP_2FA_ENABLED=false
 
-              session = fastlane spaceship login --username fastlane_username --password fastlane_password
+              session = Spaceship::ConnectAPI.login(email: fastlane_username, password: fastlane_password)
 
 
               # Create a new app on App Store Connect
