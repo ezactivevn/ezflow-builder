@@ -89,7 +89,6 @@ jobs:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-          SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
         run: |
           cd client/ios/App && mkdir fastlane
 
@@ -112,14 +111,9 @@ jobs:
               fastlane_username = ENV["FASTLANE_USER"]
               fastlane_password = ENV["FASTLANE_PASSWORD"]
               
-              SPACESHIP_2FA_ENABLED=false
               fastlane_password = ENV["FASTLANE_PASSWORD"]
-
-
               session = nil
-              SPACESHIP_2FA_ENABLED=false
 
-              session = Spaceship::ConnectAPI.login(email: fastlane_username, password: fastlane_password)
 
 
               # Create a new app on App Store Connect
@@ -134,13 +128,30 @@ jobs:
               #   username: apple_id
               # )
 
-              cert(session: session)
-              sigh(app_identifier: app_identifier, session: session)
-              get_certificates(session: session)
-              get_provisioning_profile(app_identifier: app_identifier, session: session)
+              cert(
+                username: apple_id,
+                app_specific_password: ENV["APP_SPECIFIC_PASSWORD"]
+              )
+          
+              # Generate and manage provisioning profiles
+              sigh(
+                app_identifier: app_identifier,
+                username: apple_id,
+                app_specific_password: ENV["APP_SPECIFIC_PASSWORD"]
+              )
+          
+             
 
               increment_build_number(xcodeproj: "App.xcodeproj")
               enable_automatic_code_signing(path: "App.xcodeproj")
+
+
+              # Upload to TestFlight
+              pilot(
+                skip_waiting_for_build_processing: true,
+                distribute_external: true,
+                app_specific_password: ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"]  # Use the GitHub secret for the application-specific password
+                )
 
               # Build and upload to App Store Connect
               gym(
@@ -149,29 +160,15 @@ jobs:
                 export_options: {
                   uploadBitcode: true,
                   uploadSymbols: true
-                }
+                },
+                username: apple_id,
+                app_password: ENV["APP_SPECIFIC_PASSWORD"]  # Use the GitHub secret for the application-specific password
+          
               )
 
-              # Upload to TestFlight
-              pilot(
-                skip_waiting_for_build_processing: true,
-                distribute_external: true,
-                session: session
-              )
+             
 
-              # Submit to App Store Connect
-              deliver(
-                skip_waiting_for_build_processing: true,
-                force: true,
-                session: session
-              )
-
-              # Upload to App Store Connect
-              upload_to_app_store(
-                skip_waiting_for_build_processing: true,
-                force: true,
-                session: session
-              )
+            
             end
           end
 
