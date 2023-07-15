@@ -75,12 +75,16 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane -NV
 
+      - name: copy p8 file to ios
+        run: cp client/AuthKey_72HCVQKN63.p8 client/ios/App/AuthKey_72HCVQKN63.p8
+
 
       - name: list files
         run: ls -la
             
       - name: Deploy IOS 
         env:
+          
           APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
           TEAM_ID: ${{ github.event.inputs.team_id }}
           APP_NAME: ${{ github.event.inputs.app_name }}
@@ -88,6 +92,9 @@ jobs:
           APPLE_ID: ${{ github.event.inputs.apple_id }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           cd client/ios/App && mkdir fastlane
@@ -103,70 +110,47 @@ jobs:
           
           platform :ios do
             lane :deployios do
-              app_identifier = ENV["APP_IDENTIFIER"]
-              team_id = ENV["TEAM_ID"]
-              itc_team_id = ENV["ITC_TEAM_ID"]
-              apple_id = ENV["APPLE_ID"]
-              app_name = ENV["APP_NAME"]
-              fastlane_username = ENV["FASTLANE_USER"]
-              fastlane_password = ENV["FASTLANE_PASSWORD"]
-              
-              fastlane_password = ENV["FASTLANE_PASSWORD"]
-              session = nil
+                # ...
 
-
-
-              # Create a new app on App Store Connect
-              # produce(
-              #   app_name: app_name,
-              #   app_identifier: app_identifier,
-              #   language: "English",
-              #   app_version: "1.0",
-              #   sku: app_identifier,
-              #   team_id: team_id,
-              #   itc_team_id: itc_team_id,
-              #   username: apple_id
-              # )
-
-              get_certificates(
-                development: true,
-                username: apple_id,
-                filename: apple_id + ".p12"
-              )
-          
-              get_provisioning_profile(
-                development: true,
-                force: true,
-                filename: apple_id + ".mobileprovision"
-              )
-
-
-              increment_build_number(xcodeproj: "App.xcodeproj")
-              enable_automatic_code_signing(path: "App.xcodeproj")
-
-
-              # Upload to TestFlight
-              pilot(
-                skip_waiting_for_build_processing: true,
-                distribute_external: true,
-                app_specific_password: ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"],
-                skip_waiting_for_build_processing: true
-                
+                app_identifier = ENV["APP_IDENTIFIER"]
+                team_id = ENV["TEAM_ID"]
+                itc_team_id = ENV["ITC_TEAM_ID"]
+                apple_id = ENV["APPLE_ID"]
+                app_name = ENV["APP_NAME"]
+                api_key_path = "./fastlane/AuthKey.p8"  # Path to the API key file
+            
+                # ...
+            
+                # Use the .p8 file for authentication and certificate management
+                cert(
+                  username: apple_id,
+                  api_key_path: api_key_path,
+                  api_key_id: ENV["APP_STORE_CONNECT_KEY_ID"],  # Add the key ID as a GitHub secret
+                  issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"]  # Add the issuer ID as a GitHub secret
                 )
-
-              # Build and upload to App Store Connect
-              gym(
-                scheme: "App",
-                export_method: "app-store",
-                export_options: {
-                  provisioningProfiles: {
-                    
-                  }
-                },
-                username: apple_id,
-                app_password: ENV["APP_SPECIFIC_PASSWORD"]  # Use the GitHub secret for the application-specific password
-          
-              )
+            
+                # Use the .p8 file for provisioning profile management
+                sigh(
+                  app_identifier: app_identifier,
+                  username: apple_id,
+                  api_key_path: api_key_path,
+                  api_key_id: ENV["APP_STORE_CONNECT_KEY_ID"],  # Add the key ID as a GitHub secret
+                  issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"]  # Add the issuer ID as a GitHub secret
+                )
+            
+                # ...
+            
+                # Build and upload to App Store Connect
+                gym(
+                  scheme: "App",
+                  export_method: "app-store",
+                  export_options: {
+                    uploadBitcode: true,
+                    uploadSymbols: true
+                  },
+                  username: apple_id,
+                  app_password: ENV["APP_SPECIFIC_PASSWORD"]
+                )
 
              
 
@@ -179,4 +163,8 @@ jobs:
           ls -la
           fastlane deployios
 
+
+
+
+        
 
