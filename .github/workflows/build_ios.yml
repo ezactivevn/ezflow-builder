@@ -138,10 +138,10 @@ jobs:
                     uploadBitcode: true,
                     uploadSymbols: true
                   },
-                  username: apple_id,
-                  app_password: ENV["APP_SPECIFIC_PASSWORD"]
                 )
 
+                # Upload to testflight
+                pilot
              
 
             
