@@ -76,7 +76,7 @@ jobs:
         run: gem install fastlane -NV
 
       - name: copy p8 file to ios
-        run: cp client/AuthKey_72HCVQKN63.p8 client/ios/App/AuthKey.p8
+        run: cp client/api_key.json client/ios/App/api_key.json
 
 
       - name: list files
@@ -117,24 +117,18 @@ jobs:
                 itc_team_id = ENV["ITC_TEAM_ID"]
                 apple_id = ENV["APPLE_ID"]
                 app_name = ENV["APP_NAME"]
-                api_key_path = "./AuthKey.p8"  # Path to the API key file
+                api_key_path = "./api_key.json"
             
-                # ...
-            
-                # Use the .p8 file for authentication and certificate management
                 cert(
                   username: apple_id,
                   api_key_path: api_key_path,
                 )
             
-                # Use the .p8 file for provisioning profile management
                 sigh(
                   app_identifier: app_identifier,
                   username: apple_id,
                   api_key_path: api_key_path,
                 )
-            
-                # ...
             
                 # Build and upload to App Store Connect
                 gym(
