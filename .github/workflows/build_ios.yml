@@ -106,6 +106,18 @@ jobs:
           ' > fastlane/Matchfile
 
           echo '
+            # For more information about the Appfile, see:
+            #     https://docs.fastlane.tools/advanced/#appfile
+
+
+            app_identifier ENV["APP_IDENTIFIER"]
+            apple_id ENV["APPLE_ID"]
+            apple_dev_portal_id ENV["APPLE_ID"] 
+            team_id ENV["TEAM_ID"]
+            itc_team_id ENV["ITC_TEAM_ID"]
+          ' > fastlane/Appfile
+
+          echo '
           lane :deploy_ios do
             # Set up variables
             app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
