@@ -79,7 +79,7 @@ jobs:
         run: cp client/api_key.json client/ios/App/api_key.json
         
       - name: copy signing.p12 to ios
-        run: cp client/signing-cert.p12.cer client/ios/App/signing-cert.p12.cer
+        run: mkdir client/ios/App/certs &&  cp client/signing-cert.p12.cer client/ios/App/certs/signing-cert.p12.cer
 
       - name: list files
         run: ls -la
