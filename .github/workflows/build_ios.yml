@@ -106,47 +106,77 @@ jobs:
           ' > fastlane/Matchfile
 
           echo '
-          default_platform(:ios)
-          
-          platform :ios do
-            lane :deployios do
-                # ...
+          lane :deploy_ios do
+            # Set up variables
+            app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+            apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
+            key_path = "./api_key.json"
+            certificate_path = "certs"
+            certificate_filename = "signing-cert.p12.cer"
+            certificate_password = "certificate_password"
+            provisioning_profile_path = "provisionings"
+            xcodeproj = "App.xcodeproj"
+            team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+            itc_team_id = CredentialsManager::AppfileConfig.try_fetch_value(:itc_team_id)
+            apple_dev_portal_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_dev_portal_id)
+            provisioning_name = "AppStore_com.ezactive.arsenal.mobileprovision"
 
-                app_identifier = ENV["APP_IDENTIFIER"]
-                team_id = ENV["TEAM_ID"]
-                itc_team_id = ENV["ITC_TEAM_ID"]
-                apple_id = ENV["APPLE_ID"]
-                app_name = ENV["APP_NAME"]
-                api_key_path = "./api_key.json"
-            
-                cert(
-                  username: apple_id,
-                  api_key_path: api_key_path,
-                )
-            
-                sigh(
-                  app_identifier: app_identifier,
-                  username: apple_id,
-                  api_key_path: api_key_path,
-                )
-            
-                # Build and upload to App Store Connect
-                gym(
-                  scheme: "App",
-                  export_method: "app-store",
-                  export_options: {
-                    uploadBitcode: true,
-                    uploadSymbols: true
-                  },
-                )
+            # Set up keychain
+            create_keychain(
+              name: "fastlane",
+              password: "fastlane",
+              default_keychain: true,
+              timeout: 3600,
+            )
 
-                # Upload to testflight
-                pilot
-             
+            # Import certificate to keychain
+            import_certificate(
+              certificate_path: certificate_path + "/" + certificate_filename,
+              certificate_password: certificate_password,
+              keychain_name: "fastlane",
+              keychain_password: "fastlane",
 
+            )
+
+
+            get_provisioning_profile(
+              app_identifier: app_identifier,
+              api_key_path: key_path,
+              provisioning_name: provisioning_name,
+              output_path: provisioning_profile_path,
+              filename: provisioning_name
+            )
+
+            # Install provisioning profile
+            install_provisioning_profile(
+              path: provisioning_profile_path + "/" + provisioning_name
+            )
+
+            increment_build_number
+            # more advanced manual code signing
+            update_code_signing_settings(
+              use_automatic_signing: false,
+              path: "App.xcodeproj",
+              team_id: team_id,
+              bundle_identifier: app_identifier,
+              code_sign_identity: "iPhone Distribution",
+              sdk: "iphoneos*",
+              profile_name: provisioning_name + " AppStore",
+            )
+
+            # build ipa
+            build_app(
+              scheme: "App",
+              export_method: "app-store",
+              export_options: {
+                provisioningProfiles: {
+                  [provisioning_name] => provisioning_name
+                }
+              }
+            )
             
-            end
           end
+
 
           ' > fastlane/Fastfile
 
