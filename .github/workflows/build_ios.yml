@@ -11,10 +11,6 @@ on:
             description: 'Team ID'
             required: true
             default: 'XXXXXXXXXX'
-          itc_team_id:
-            description: 'ITC Team ID'
-            required: true
-            default: 'XXXXXXXXXX'
           apple_id:
             description: 'Apple ID'
             required: true
@@ -75,11 +71,17 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane -NV
 
-      - name: copy p8 file to ios
-        run: cp client/api_key.json client/ios/App/api_key.json
         
-      - name: copy signing.p12 to ios
-        run: mkdir client/ios/App/certs &&  cp client/signing-cert.p12.cer client/ios/App/certs/signing-cert.p12.cer
+      - name: Copy files to iOS
+        run: |
+          # Create directories recursively
+          mkdir -p client/ios/App/certs
+          mkdir -p client/ios/App/fastlane
+      
+          # Copy files
+          cp client/signing-cert.p12.cer client/ios/App/certs/signing-cert.p12.cer
+          cp fastlane/Fastfile client/ios/App/fastlane/Fastfile
+          cp api_key.json client/ios/App/api_key.json
 
       - name: list files
         run: ls -la
@@ -90,112 +92,14 @@ jobs:
           APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
           TEAM_ID: ${{ github.event.inputs.team_id }}
           APP_NAME: ${{ github.event.inputs.app_name }}
-          ITC_TEAM_ID: ${{ github.event.inputs.itc_team_id }}
           APPLE_ID: ${{ github.event.inputs.apple_id }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
         run: |
-          cd client/ios/App && mkdir fastlane
+             cd client/ios/App 
+             fastlane create_app
+             fastlane release_app 
+             fastlane deploy_to_tesflight
 
-          echo '
-          default_platform(:ios)
-          match :appstore, type: 'appstore'
-          match :development, type: 'development'
-          ' > fastlane/Matchfile
-
-          echo '
-            # For more information about the Appfile, see:
-            #     https://docs.fastlane.tools/advanced/#appfile
-
-
-            app_identifier ENV["APP_IDENTIFIER"]
-            apple_id ENV["APPLE_ID"]
-            apple_dev_portal_id ENV["APPLE_ID"] 
-            team_id ENV["TEAM_ID"]
-            itc_team_id ENV["ITC_TEAM_ID"]
-          ' > fastlane/Appfile
-
-          echo '
-          lane :deploy_ios do
-            # Set up variables
-            app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-            apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-            key_path = "./api_key.json"
-            certificate_path = "certs"
-            certificate_filename = "signing-cert.p12.cer"
-            certificate_password = "certificate_password"
-            provisioning_profile_path = "provisionings"
-            xcodeproj = "App.xcodeproj"
-            team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-            itc_team_id = CredentialsManager::AppfileConfig.try_fetch_value(:itc_team_id)
-            apple_dev_portal_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_dev_portal_id)
-            provisioning_name = "AppStore_com.ezactive.arsenal.mobileprovision"
-
-            # Set up keychain
-            create_keychain(
-              name: "fastlane",
-              password: "fastlane",
-              default_keychain: true,
-              timeout: 3600,
-            )
-
-            # Import certificate to keychain
-            import_certificate(
-              certificate_path: certificate_path + "/" + certificate_filename,
-              certificate_password: certificate_password,
-              keychain_name: "fastlane",
-              keychain_password: "fastlane",
-
-            )
-
-
-            get_provisioning_profile(
-              app_identifier: app_identifier,
-              api_key_path: key_path,
-              provisioning_name: provisioning_name,
-              output_path: provisioning_profile_path,
-              filename: provisioning_name
-            )
-
-            # Install provisioning profile
-            install_provisioning_profile(
-              path: provisioning_profile_path + "/" + provisioning_name
-            )
-
-            increment_build_number
-            # more advanced manual code signing
-            update_code_signing_settings(
-              use_automatic_signing: false,
-              path: "App.xcodeproj",
-              team_id: team_id,
-              bundle_identifier: app_identifier,
-              code_sign_identity: "iPhone Distribution",
-              sdk: "iphoneos*",
-              profile_name: provisioning_name + " AppStore",
-            )
-
-            # build ipa
-            build_app(
-              scheme: "App",
-              export_method: "app-store",
-              export_options: {
-                provisioningProfiles: {
-                  [provisioning_name] => provisioning_name
-                }
-              }
-            )
-            
-          end
-
-
-          ' > fastlane/Fastfile
-
-          ls -la
-          fastlane deploy_ios
 
 
 
