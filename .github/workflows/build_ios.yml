@@ -97,7 +97,6 @@ jobs:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
         run: |
              cd client/ios/App 
-             fastlane create_app
              fastlane release_app 
              fastlane deploy_to_tesflight
 
