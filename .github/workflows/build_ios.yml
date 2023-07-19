@@ -102,5 +102,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           cd client/ios/App
-          fastlane release_app
-          fastlane deploy_to_testflight
+          fastlane ios release_app
+          fastlane ios deploy_to_testflight
