@@ -1,0 +1,76 @@
+name: Deploy Android App
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release Version'
+        required: true
+      app_name:
+        description: 'App Name'
+        required: true
+      repository_url:
+        description: 'Repository URL'
+        required: true
+      branch:
+        description: 'Branch'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          repository: ${{ github.event.inputs.repository }}
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: rm ios
+        run: rm -rf client/android
+
+      - name: Install capacitor
+        run: npm install -g @capacitor/cli
+
+      - name: Install dependencies
+        run: cd client && npm install --legacy-peer-deps
+
+      - name: Build Android
+        run: cd client && npx cap add android
+
+      - name: Generate resources
+        run: cd client && npx capacitor-assets generate
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+
+      - name: Install Fastlane
+        run: gem install Fastlane
+      
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Make gradlew executable
+        run: cd client && cd android && chmod +x ./gradlew
+
+      - name: Build Android
+        run: cd client && ./gradlew assembleDebug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: android
+          path: client/android
+
+      
+
+      
+
+    
+      
+
+                
+    
