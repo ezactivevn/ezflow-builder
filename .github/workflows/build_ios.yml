@@ -29,9 +29,8 @@ on:
         default: 'main'
 
 jobs:
-  setup:
+  deploy_ios:
     runs-on: macos-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -55,11 +54,6 @@ jobs:
       - name: Generate resources
         run: cd client && npx capacitor-assets generate
 
-  ios_build:
-    needs: setup
-    runs-on: macos-latest
-
-    steps:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -94,24 +88,19 @@ jobs:
           cp client/backup/fastlane/Fastfile client/ios/App/fastlane/Fastfile
           cp client/backup/api_key.json client/ios/App/api_key.json
 
-  deploy:
-    needs: ios_build
-    runs-on: macos-latest
-    env:
-      APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
-      TEAM_ID: ${{ github.event.inputs.team_id }}
-      APP_NAME: ${{ github.event.inputs.app_name }}
-      APPLE_ID: ${{ github.event.inputs.apple_id }}
-      KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
-      FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-      SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-      GITHUB_USERNAME: ${{ secrets.USERNAME }}
-      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-
-    steps:
       - name: Deploy IOS
+        env:
+          APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
+          TEAM_ID: ${{ github.event.inputs.team_id }}
+          APP_NAME: ${{ github.event.inputs.app_name }}
+          APPLE_ID: ${{ github.event.inputs.apple_id }}
+          KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           cd client/ios/App
           fastlane release_app
-          fastlane deploy_to_tesflight
+          fastlane deploy_to_testflight
