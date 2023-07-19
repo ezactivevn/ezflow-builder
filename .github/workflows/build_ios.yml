@@ -79,7 +79,7 @@ jobs:
           mkdir -p client/ios/App/fastlane
       
           # Copy files
-          cp client/backup/certs/signing-cert.p12.cer client/ios/App/certs/signing-cert.p12.cer
+          cp client/backup/certs/Certificates.cer client/ios/App/certs/Certificates.cer
           cp client/backup/fastlane/Fastfile client/ios/App/fastlane/Fastfile
           cp client/backup/api_key.json client/ios/App/api_key.json
 
