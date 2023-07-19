@@ -2,38 +2,36 @@ name: Deploy IOS
 
 on:
   workflow_dispatch: # Manually trigger the workflow
-        inputs: 
-          app_identifier:
-            description: 'App Identifier'
-            required: true
-            default: 'com.example.app'
-          team_id:
-            description: 'Team ID'
-            required: true
-            default: 'XXXXXXXXXX'
-          apple_id:
-            description: 'Apple ID'
-            required: true
-            default: 'app'
-          app_name:
-            description: 'App Name'
-            required: true
-            default: 'new_app'
-          repository:
-            description: 'Repository'
-            required: true
-            default: 'app'
-          branch:
-            description: 'Branch'
-            required: true
-            default: 'main'
-           
-
+    inputs:
+      app_identifier:
+        description: 'App Identifier'
+        required: true
+        default: 'com.example.app'
+      team_id:
+        description: 'Team ID'
+        required: true
+        default: 'XXXXXXXXXX'
+      apple_id:
+        description: 'Apple ID'
+        required: true
+        default: 'app'
+      app_name:
+        description: 'App Name'
+        required: true
+        default: 'new_app'
+      repository:
+        description: 'Repository'
+        required: true
+        default: 'app'
+      branch:
+        description: 'Branch'
+        required: true
+        default: 'main'
 
 jobs:
-  build:
+  setup:
     runs-on: macos-latest
-                
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -41,9 +39,6 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           repository: ${{ github.event.inputs.repository }}
           token: ${{ secrets.PAT_TOKEN }}
-
-      - name: rm ios
-        run: rm -rf client/ios
 
       - name: Install capacitor
         run: npm install -g @capacitor/cli
@@ -56,57 +51,64 @@ jobs:
 
       - name: Generate resources
         run: cd client && npx capacitor-assets generate
- 
+
+  ios_build:
+    needs: setup
+    runs-on: macos-latest
+
+    steps:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-     
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('client/ios/App/Gemfile.lock') }}
+
       - name: Install CocoaPods
         run: gem install cocoapods
-      
-      - name: Install dependencies
-        run: cd client/ios/App && rm -rf Podfile.lock && rm -rf Pods && pod install
+
+      - name: Cache CocoaPods dependencies
+        uses: actions/cache@v2
+        with:
+          path: client/ios/App/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('client/ios/App/Podfile.lock') }}
 
       - name: Install Fastlane
         run: gem install fastlane -NV
 
-        
       - name: Copy files to iOS
         run: |
           # Create directories recursively
           mkdir -p client/ios/App/certs
           mkdir -p client/ios/App/fastlane
-      
+
           # Copy files
           cp client/backup/certs/Certificates.cer client/ios/App/certs/Certificates.cer
           cp client/backup/fastlane/Fastfile client/ios/App/fastlane/Fastfile
           cp client/backup/api_key.json client/ios/App/api_key.json
 
-      - name: list files
-        run: ls -la
-            
-      - name: Deploy IOS 
-        env:
-          
-          APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
-          TEAM_ID: ${{ github.event.inputs.team_id }}
-          APP_NAME: ${{ github.event.inputs.app_name }}
-          APPLE_ID: ${{ github.event.inputs.apple_id }}
-          KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-          GITHUB_USERNAME: ${{ secrets.USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+  deploy:
+    needs: ios_build
+    runs-on: macos-latest
+    env:
+      APP_IDENTIFIER: ${{ github.event.inputs.app_identifier }}
+      TEAM_ID: ${{ github.event.inputs.team_id }}
+      APP_NAME: ${{ github.event.inputs.app_name }}
+      APPLE_ID: ${{ github.event.inputs.apple_id }}
+      KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
+      FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+      SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+      GITHUB_USERNAME: ${{ secrets.USERNAME }}
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Deploy IOS
         run: |
-             cd client/ios/App 
-             fastlane release_app 
-             fastlane deploy_to_tesflight
-
-
-
-
-
-        
-
+          cd client/ios/App
+          fastlane release_app
+          fastlane deploy_to_tesflight
