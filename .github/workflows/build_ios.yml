@@ -76,6 +76,9 @@ jobs:
 
       - name: Install Fastlane
         run: gem install fastlane -NV
+      
+      - name: Run pod install
+        run: cd client/ios/App && pod install
 
       - name: Copy files to iOS
         run: |
