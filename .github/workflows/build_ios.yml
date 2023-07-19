@@ -97,6 +97,8 @@ jobs:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
              cd client/ios/App 
              fastlane release_app 
