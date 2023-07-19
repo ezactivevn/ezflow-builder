@@ -95,6 +95,7 @@ jobs:
           APPLE_ID: ${{ github.event.inputs.apple_id }}
           KEYCHAINPASSWORD: ${{ secrets.KEYCHAINPASSWORD }}
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          SPACESHIP_2FA_SMS_DEFAULT_PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
         run: |
              cd client/ios/App 
              fastlane release_app 
