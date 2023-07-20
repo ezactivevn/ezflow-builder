@@ -54,26 +54,16 @@ jobs:
       - name: Generate resources
         run: cd client && npx capacitor-assets generate
 
-      # - name: Setup Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.7
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
 
-      # - name: Cache Ruby gems
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: vendor/bundle
+      - name: Install CocoaPods
+        run: gem install cocoapods
 
-      # - name: Install CocoaPods
-      #   run: gem install cocoapods
-
-      # - name: Cache CocoaPods dependencies
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: client/ios/App/Pods
-
-      # - name: Install Fastlane
-      #   run: gem install fastlane -NV
+      - name: Install Fastlane
+        run: gem install fastlane -NV
       
       - name: Run pod install
         run: cd client/ios/App && pod install
