@@ -39,20 +39,20 @@ jobs:
           repository: ${{ github.event.inputs.repository }}
           token: ${{ secrets.PAT_TOKEN }}
 
-      - name: Install capacitor
-        run: npm install -g @capacitor/cli
+      # - name: Install capacitor
+      #   run: npm install -g @capacitor/cli
 
-      - name: Install dependencies
-        run: cd client && npm install --legacy-peer-deps
+      # - name: Install dependencies
+      #   run: cd client && npm install --legacy-peer-deps
 
-      - name: Remove iOS
-        run: rm -rf client/ios
+      # - name: Remove iOS
+      #   run: rm -rf client/ios
 
-      - name: Build IOS
-        run: cd client && npx cap add ios
+      # - name: Build IOS
+      #   run: cd client && npx cap add ios
 
-      - name: Generate resources
-        run: cd client && npx capacitor-assets generate
+      # - name: Generate resources
+      #   run: cd client && npx capacitor-assets generate
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -87,7 +87,7 @@ jobs:
           mkdir -p client/ios/App/fastlane
 
           # Copy files
-          cp client/backup/certs/Certificates.p12 client/ios/App/certs/Certificates.p12
+          cp client/backup/certs/Certificates.cer client/ios/App/certs/Certificates.cer
           cp client/backup/fastlane/Fastfile client/ios/App/fastlane/Fastfile
           cp client/backup/api_key.json client/ios/App/api_key.json
 
