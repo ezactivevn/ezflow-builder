@@ -30,7 +30,7 @@ on:
 
 jobs:
   deploy_ios:
-    runs-on: macos-latest
+    runs-on: 'pro16inch'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
