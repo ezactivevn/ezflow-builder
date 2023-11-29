@@ -102,7 +102,7 @@ jobs:
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan key:generate
 
     - name: Run migrate in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan migrate:fresh --seed
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan migrate
 
     - name: Run passport install in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan passport:install
