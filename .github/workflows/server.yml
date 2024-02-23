@@ -3,8 +3,8 @@ on:
   # dispatch
   workflow_dispatch: # Manually trigger the workflow
     inputs:
-      app_name:
-        description: 'App Name'
+      app_id:
+        description: 'Application ID'
         required: true
         default: 'unknown'
       repo_url:
@@ -71,19 +71,19 @@ jobs:
       run: ls -a
 
     - name: Remove folder server
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
 
     - name: Copy folder server to /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_id }}
 
     - name: list files in /var/www/html/
-      run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
+      run: ls -a /var/www/html/${{ github.event.inputs.app_id }}
 
     - name: copy env.txt to .env
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp /var/www/html/${{ github.event.inputs.app_name }}/env.txt /var/www/html/${{ github.event.inputs.app_name }}/.env
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp /var/www/html/${{ github.event.inputs.app_id }}/env.txt /var/www/html/${{ github.event.inputs.app_id }}/.env
 
     - name: run python create_db.py in /var/www/html/
-      run: cd /var/www/html/${{ github.event.inputs.app_name }} && python createDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
+      run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
       env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -91,31 +91,31 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     - name: Run composer install in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_name }}
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_id }}
 
     - name: change owner of /var/www/html/public
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}/public
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_id }}/public
 
     - name: change owner of /var/www/html/storage
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_name }}/storage
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_id }}/storage
 
     - name: run storage:link
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan storage:link
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan storage:link
 
     - name: Run generate key in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan key:generate
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan key:generate
 
     - name: Run migrate in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan migrate
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan migrate
 
     - name: Run passport install in /var/www/html/
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_name }}/artisan passport:install
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan passport:install
 
     - name: List files in /var/www/html/
-      run: ls -a /var/www/html/${{ github.event.inputs.app_name }}
+      run: ls -a /var/www/html/${{ github.event.inputs.app_id }}
 
     - name: run python updateDB.py in /var/www/html/
-      run: cd /var/www/html/${{ github.event.inputs.app_name }} && python updateDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
+      run: cd /var/www/html/${{ github.event.inputs.app_id }} && python updateDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
 
   failer:
     needs: build
@@ -136,7 +136,7 @@ jobs:
       - name: Send mail failer
       
         
-        run: python sendmail.py ${{ github.event.inputs.app_name }} fail
+        run: python sendmail.py ${{ github.event.inputs.app_id }} fail
 
 
 

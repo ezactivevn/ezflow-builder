@@ -3,8 +3,8 @@ on:
   # dispatch
   workflow_dispatch: # Manually trigger the workflow
     inputs:
-      app_name:
-        description: 'Application name'
+      app_id:
+        description: 'Application ID'
         required: true
         default: 'unknown'
 
@@ -92,7 +92,7 @@ jobs:
     #     sudo docker-compose --version
     
     - name: Run Python script
-      run:  python runscript.py ${{ github.event.inputs.app_name }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
+      run:  python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
 
 
