@@ -84,7 +84,11 @@ jobs:
 
     - name: run python create_db.py in /var/www/html/
       run: cd /var/www/html/${{ github.event.inputs.app_name }} && python createDB.py ${{ github.event.inputs.app_name }} ${{ secrets.GCLOUD_PASSWORD }}
-    
+      env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     - name: Run composer install in /var/www/html/
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_name }}
