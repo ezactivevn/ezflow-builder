@@ -1,4 +1,91 @@
 name: Server Workflow
+on:
+  # dispatch
+  workflow_dispatch: # Manually trigger the workflow
+    inputs:
+      app_id:
+        description: 'Application ID'
+        required: true
+        default: 'unknown'
+      repo_url:
+        description: 'Repository URL'
+        required: true
+        default: 'unknown'
+
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x  # Replace "x" with the desired Python version
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        pip install mysql-connector-python
+
+    - name: Set up Git
+      run: |
+        git config --global user.name ${{ vars.USERNAME }}
+        git config --global user.email ${{ vars.EMAIL }}
+
+        
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: main
+        repository: ${{ github.event.inputs.repo_url }}
+        token: ${{ secrets.PAT_TOKEN }}
+    
+    - name: Authenticate with GitHub
+      env:
+        TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: echo "machine github.com login ${{vars.USERNAME}} password $TOKEN" > ~/.netrc
+
+    - name : add PAT_TOKEN
+      run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+
+    - name: log PAT_TOKEN
+      run: echo $PAT_TOKEN
+
+    - name : add FIREBASE_TOKEN
+      run: export FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}
+
+    - name: log FIREBASE_TOKEN
+      run: echo $FIREBASE_TOKEN
+
+    - name: add GOOGLE_APPLICATION_CREDENTIALS 
+      run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
+
+    - name: log GOOGLE_APPLICATION_CREDENTIALS 
+      run: echo $GOOGLE_APPLICATION_CREDENTIALS
+
+
+    - name: list files
+      run: ls -a
+
+    - name: Remove folder server
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
+
+    - name: Copy folder server to /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_id }}
+
+    - name: list files in /var/www/html/
+      run: ls -a /var/www/html/${{ github.event.inputs.app_id }}
+
+    - name: copy env.txt to .env
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S cp /var/www/html/${{ github.event.inputs.app_id }}/env.txt /var/www/html/${{ github.event.inputs.app_id }}/.env
+
+    - name: run python create_db.py in /var/www/html/
+      run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+      env:
+          DB_HOST: ${{ secrets.DB_HOST }}name: Server Workflow
 
 on:
   workflow_dispatch:
@@ -133,3 +220,60 @@ jobs:
 
       - name: Send mail failer
         run: python sendmail.py ${{ env.APP_ID }} fail
+
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    - name: Run composer install in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S composer install -d /var/www/html/${{ github.event.inputs.app_id }}
+
+    - name: change owner of /var/www/html/public
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_id }}/public
+
+    - name: change owner of /var/www/html/storage
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S chown -R www-data:www-data /var/www/html/${{ github.event.inputs.app_id }}/storage
+
+    - name: run storage:link
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan storage:link
+
+    - name: Run generate key in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan key:generate
+
+    - name: Run migrate in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan migrate
+
+    - name: Run passport install in /var/www/html/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | yes | sudo -S php /var/www/html/${{ github.event.inputs.app_id }}/artisan passport:install
+
+    - name: List files in /var/www/html/
+      run: ls -a /var/www/html/${{ github.event.inputs.app_id }}
+
+    - name: run python updateDB.py in /var/www/html/
+      run: cd /var/www/html/${{ github.event.inputs.app_id }} && python updateDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+
+  failer:
+    needs: build
+    runs-on: ubuntu-latest
+    if : ${{ failure() }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Replace "x" with the desired Python version
+    
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          pip install mysql-connector-python
+
+      - name: Send mail failer
+      
+        
+        run: python sendmail.py ${{ github.event.inputs.app_id }} fail
+
+
+
+
+
