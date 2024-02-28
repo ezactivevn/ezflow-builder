@@ -69,6 +69,14 @@ jobs:
       - name: List file
         run: ls -l
 
+      - name: run python create_db.py in /var/www/html/
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+        env:
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
       - name: Run Python script for Laravel setup
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python setup_server.py
         env:
@@ -77,4 +85,7 @@ jobs:
             DB_NAME: ${{ secrets.DB_NAME }}
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+      - name: run python updateDB.py in /var/www/html/
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python updateDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
 
