@@ -34,63 +34,41 @@ jobs:
           python-version: 3.x
 
       - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
-        pip install mysql-connector-python
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          pip install mysql-connector-python
 
       - name: Set up Git
-      run: |
-        git config --global user.name $USERNAME
-        git config --global user.email $EMAIL     
+        run: |
+          git config --global user.name $USERNAME
+          git config --global user.email $EMAIL     
 
       - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        ref: main
-        repository: ${{ github.event.inputs.repo_url }}
-        token: $PAT_TOKEN
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          repository: ${{ github.event.inputs.repo_url }}
+          token: $PAT_TOKEN
 
       - name: Set up environment variables
-      run: |
-        export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
-        export FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}
-        export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
-        echo "PAT_TOKEN=$PAT_TOKEN" >> $GITHUB_ENV
-        echo "FIREBASE_TOKEN=$FIREBASE_TOKEN" >> $GITHUB_ENV
-        echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
+        run: |
+          export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+          export FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}
+          export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
+          echo "PAT_TOKEN=$PAT_TOKEN" >> $GITHUB_ENV
+          echo "FIREBASE_TOKEN=$FIREBASE_TOKEN" >> $GITHUB_ENV
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
  
       - name: List file
-      run: ls -l
+        run: ls -l
 
       - name: Run Python script for Laravel setup
-      run: cd /var/www/html/${{ github.event.inputs.app_id }} && python setup_server.py
-      env:
-          APP_ID: ${{ github.event.inputs.app_id }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python setup_server.py
+        env:
+            APP_ID: ${{ github.event.inputs.app_id }}
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-  failer:
-    needs: build
-    runs-on: ubuntu-latest
-    if: ${{ failure() }}
-    env:
-      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      USERNAME: ${{ secrets.USERNAME }}
-      EMAIL: ${{ secrets.EMAIL }}
-
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-    
-      # ... (rest of your steps remain unchanged)
