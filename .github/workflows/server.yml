@@ -60,6 +60,12 @@ jobs:
           echo "FIREBASE_TOKEN=$FIREBASE_TOKEN" >> $GITHUB_ENV
           echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
  
+      - name: Remove folder server
+        run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
+    
+      - name: Copy folder server to /var/www/html/
+        run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_id }}
+      
       - name: List file
         run: ls -l
 
