@@ -49,7 +49,7 @@ jobs:
         with:
           ref: main
           repository: ${{ github.event.inputs.repo_url }}
-          token: $PAT_TOKEN
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Set up environment variables
         run: |
