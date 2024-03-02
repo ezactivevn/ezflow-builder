@@ -5,6 +5,12 @@ on:
             app_id:
                 description: 'Application ID'
                 required: true
+            email:
+                description: 'Customer Email'
+                required: true
+            requester:
+                description: 'Requester Email'
+                required: true
 
 jobs:
     delete:
@@ -23,7 +29,7 @@ jobs:
                 pip install mysql-connector-python
 
         - name: Delete Project
-          run: python delete_project.py ${{ github.event.inputs.app_id }} ${{secrets.GCLOUD_PASSWORD}}
+          run: python delete.py ${{ github.event.inputs.app_id }} ${{secrets.GCLOUD_PASSWORD}} ${{ github.event.inputs.email }} ${{ github.event.inputs.requester }}
 
             
                 
