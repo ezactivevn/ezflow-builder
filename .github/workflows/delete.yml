@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Run sudo with password
       run: |
-        echo "${{ secrets.GCLOUD_PASSWORD }}" | sudo -S rm -rf ${{runner.workspace}}/_work
+        echo "${{ secrets.GCLOUD_PASSWORD }}" | sudo -S rm -rf ${{runner.workspace}}
 
     - name: Set up Python
       uses: actions/setup-python@v2
