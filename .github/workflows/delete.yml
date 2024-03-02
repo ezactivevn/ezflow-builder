@@ -36,6 +36,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
         pip install mysql-connector-python
+        pip install pusher
+
 
     - name: Delete Project
       run: python delete.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }} ${{ github.event.inputs.email }} ${{ github.event.inputs.requester }}
