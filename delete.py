@@ -24,7 +24,7 @@ def delete_db(app_id):
     cursor = connection.cursor()
 
     # delete table customer
-    cursor.execute("DELETE FROM customer WHERE app_id = '"+app_id+"'")
+    cursor.execute("DELETE FROM customers WHERE app_id = '"+app_id+"'")
     connection.commit()
     cursor.close()
     connection.close()
