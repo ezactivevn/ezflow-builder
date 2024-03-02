@@ -14,7 +14,7 @@ on:
 
 jobs:
     delete:
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
 
         steps:
         - name: Set up Python
