@@ -4,6 +4,7 @@ from mysql.connector import Error
 import sys
 import subprocess
 import os
+import pusher
 
 
 app_id = sys.argv[1]
