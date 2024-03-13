@@ -20,7 +20,7 @@ def update_db(app_name):
     cursor = connection.cursor()
 
     # update table customer field status
-    cursor.execute("UPDATE customer SET status = 0 WHERE app_name = '"+app_name+"'")
+    cursor.execute(f"UPDATE customer SET status = {status} WHERE name = '{app_name}'")
     connection.commit()
     cursor.close()
     connection.close()
