@@ -95,21 +95,21 @@ jobs:
     if: failure()
 
     steps:
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
 
-    - name: Install dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          pip install mysql-connector-python
-          pip install pusher
+            python -m pip install --upgrade pip
+            pip install requests
+            pip install mysql-connector-python
+            pip install pusher
 
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Run sendmail.py
-      run: python sendmail.py ${{ github.event.inputs.app_id }} 3
+      - name: Run sendmail.py
+        run: python sendmail.py ${{ github.event.inputs.app_id }} 3
 
