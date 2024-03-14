@@ -1,28 +1,23 @@
 name: Client Workflow
+
 on:
-  # dispatch
-  workflow_dispatch: # Manually trigger the workflow
+  workflow_dispatch:
     inputs:
       app_id:
         description: 'Application ID'
         required: true
         default: 'unknown'
 
-
 jobs:
   build:
-    runs-on: ubuntu-latest  # Change the runner if needed
+    runs-on: ubuntu-latest
 
     steps:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.x  # Replace "x" with the desired Python version
-    - name: Checkout code
-      uses: actions/setup-node@v1
-      with:
-        node-version: '18.x'
-    
+        python-version: 3.x
+
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -34,43 +29,30 @@ jobs:
       run: |
         git config --global user.name Phu Hoang
         git config --global user.email ${{ vars.EMAIL }}
-    
+
     - name: Authenticate with GitHub
       env:
         TOKEN: ${{ secrets.PAT_TOKEN }}
       run: echo "machine github.com login ${{vars.USERNAME}} password $TOKEN" > ~/.netrc
 
-    - name : add PAT_TOKEN
-      run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18.x'
 
-    - name: log PAT_TOKEN
-      run: echo $PAT_TOKEN
-
-    - name : add FIREBASE_TOKEN
-      run: export FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}
-
-    - name: log FIREBASE_TOKEN
-      run: echo $FIREBASE_TOKEN
-
-    - name: add GOOGLE_APPLICATION_CREDENTIALS 
-      run: export GOOGLE_APPLICATION_CREDENTIALS=client_secret.json
-
-    - name: log GOOGLE_APPLICATION_CREDENTIALS 
-      run: echo $GOOGLE_APPLICATION_CREDENTIALS
-
-    - name: list files
-      run: cd ..  # Change this to your folder name if necessary
-
-    - name: list files
-      run: ls -a
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests
-        pip install firebase-admin
-        pip install mysql-connector-python
- 
+        pip install -r requirements.txt  # Use your requirements file name
+
     - name: Run Python script
       run:  python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
@@ -88,8 +70,7 @@ jobs:
       - name: Install dependencies
         run: |
             python -m pip install --upgrade pip
-            pip install requests
-            pip install mysql-connector-python
+            pip install -r requirements.txt  # Use your requirements file name
             pip install pusher
 
       - name: Checkout code
@@ -97,5 +78,3 @@ jobs:
 
       - name: Run sendmail.py
         run: python sendmail.py ${{ github.event.inputs.app_id }} 0
-
-
