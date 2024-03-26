@@ -40,6 +40,9 @@ jobs:
       with:
         node-version: '18.x'
 
+    - name: Install Yarn
+      run: npm install -g yarn
+
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
@@ -55,6 +58,14 @@ jobs:
 
     - name: Run Python script
       run:  python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
+
+    - name: Cache build
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
 
   notify-on-failure:
     runs-on: ubuntu-latest
