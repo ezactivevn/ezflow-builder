@@ -63,6 +63,15 @@ jobs:
           key: ${{ runner.os }}-firebase-tools-${{ hashFiles('firebase_tools.json') }}
           restore-keys: |
             ${{ runner.os }}-firebase-tools-
+          
+      - name: Cache dist/build folder
+        uses: actions/cache@v2
+        with:
+          path: client/dist/build
+          key: ${{ runner.os }}-dist-build-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dist-build-
+
 
       - name: Install dependencies
         run: |
