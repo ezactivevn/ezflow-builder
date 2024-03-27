@@ -56,6 +56,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
+      - name: Cache Firebase tools
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/firebase_tools
+          key: ${{ runner.os }}-firebase-tools-${{ hashFiles('firebase_tools.json') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-tools-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
