@@ -39,39 +39,46 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "18.x"
-          
+
       - name: Cache dependencies
+        id: cache_python
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+        if: steps.cache_python.outputs.cache-hit != 'true'
 
       - name: Cache node modules
+        id: cache_node_modules
         uses: actions/cache@v2
         with:
           path: client/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
+        if: steps.cache_node_modules.outputs.cache-hit != 'true'
 
       - name: Cache Firebase tools
+        id: cache_firebase_tools
         uses: actions/cache@v2
         with:
           path: ~/.cache/firebase_tools
           key: ${{ runner.os }}-firebase-tools-${{ hashFiles('firebase_tools.json') }}
           restore-keys: |
             ${{ runner.os }}-firebase-tools-
-          
+        if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
+
       - name: Cache dist/build folder
+        id: cache_dist_build
         uses: actions/cache@v2
         with:
           path: client/dist/build
           key: ${{ runner.os }}-dist-build-${{ hashFiles('client/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-dist-build-
-
+        if: steps.cache_dist_build.outputs.cache-hit != 'true'
 
       - name: Install dependencies
         run: |
