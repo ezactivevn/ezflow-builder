@@ -70,16 +70,6 @@ jobs:
             ${{ runner.os }}-firebase-tools-
         if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
 
-      - name: Cache dist/build folder
-        id: cache_dist_build
-        uses: actions/cache@v2
-        with:
-          path: client/dist/build
-          key: ${{ runner.os }}-dist-build-${{ hashFiles('client/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-dist-build-
-        if: steps.cache_dist_build.outputs.cache-hit != 'true'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
