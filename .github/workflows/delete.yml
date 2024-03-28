@@ -41,3 +41,6 @@ jobs:
 
     - name: Delete Project
       run: python delete.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }} ${{ github.event.inputs.email }} ${{ github.event.inputs.requester }}
+
+    - name: Delete Firease Project
+      run: python firebase.py ${{ github.event.inputs.app_id }}
