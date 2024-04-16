@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: ezleague_demo
+          ref: develop
           repository: ezactivevn/ezleague-core
           token: ${{ secrets.PAT_TOKEN }}
 
@@ -69,6 +69,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-firebase-tools-
         if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
+
+      - name: Cache dist build
+        id: cache_dist
+        uses: actions/cache@v2
+        with:
+          path: client/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dist-
+        if: steps.cache_dist.outputs.cache-hit != 'true'
 
       - name: Install dependencies
         run: |
