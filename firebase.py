@@ -4,7 +4,7 @@ import requests
 import json
 import sys
 
-app_id = sys.argv[1]
+# app_id = sys.argv[1]
 
 
 # Path to your JSON key file
@@ -49,7 +49,7 @@ for site in result.json()['sites']:
     
     if site_id not in except_sites:
         # if site_id string contains app_id
-        if app_id in site_id:
+        # if app_id in site_id:
             print(f"Deleting site {site_id}")
             url = "https://firebasehosting.googleapis.com/v1beta1/projects/ezactive-ezleague/sites/" + site_id
             result = requests.delete(url, headers={"Authorization": "Bearer " + access_token})
