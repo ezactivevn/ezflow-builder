@@ -24,25 +24,30 @@ access_token = credentials.token
 print("Bearer token:", access_token)
 
 
+
+url = "https://www.ezactive.com/ezflow/server/admin/customer/getAllCustomers"
+
+result =requests.get(url)
+# parse json
+
+json_string = json.loads(result.text)
+
+data = json_string["data"]
+
+except_sites = []
+
+for customer in data:
+
+    except_sites.append(customer["app_url"])
+
+print(except_sites)
+
+
 url = "https://firebasehosting.googleapis.com/v1beta1/projects/ezactive-ezleague/sites"
 
 # get all sites with access token
 
 result =requests.get(url, headers={"Authorization": "Bearer " + access_token})
-
-print(result.text)
-
-# delete site name 
-
-except_sites = []
-
-# get data from json file
-with open('firebase_sites.json') as json_file:
-    data = json.load(json_file)
-
-    for site in data['sites']:
-        except_sites.append(site['siteId'])
-
 
 for site in result.json()['sites']:
     site_id = site['name'].split("/")[-1]
