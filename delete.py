@@ -52,8 +52,9 @@ def rm_alias_in_apache_config(config_file_path, alias_path):
 
     # Remove the specified alias and its related lines
     command = (
-        f"echo '{password}' | sudo -S sed -i '/# {alias_path} begin/,/# {alias_path} end/d' {config_file_path}"
+    f"echo '{password}' | sudo -S sed -i '/# {alias_path.replace('/', '\/')} begin/,/# {alias_path.replace('/', '\/')} end/d' {config_file_path}"
     )
+
     subprocess.run(command, shell=True, check=True)
 
     # Revoke write permissions from the config file
