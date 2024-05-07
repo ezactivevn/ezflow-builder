@@ -45,7 +45,7 @@ def delete_project(app_id, gcloud_password):
 delete_project(app_id, gcloud_password)
 
 def rm_alias_in_apache_config(config_file_path, alias_path):
-    password = "<password>"  # Replace with the actual sudo password
+    password = gcloud_password
 
     # Grant write permissions to the config file
     subprocess.run(f"echo '{password}' | sudo -S chmod +w {config_file_path}", shell=True, check=True)
