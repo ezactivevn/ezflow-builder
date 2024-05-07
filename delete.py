@@ -59,7 +59,7 @@ def rm_alias_in_apache_config(config_file_path, alias_path):
     # Revoke write permissions from the config file
     subprocess.run(f"echo '{password}' | sudo -S chmod -w {config_file_path}", shell=True, check=True)
 
-rm_alias_in_apache_config("/etc/apache2/sites-available/.conf", f"/{app_id}", f"/var/www/html/{app_id}/public")
+rm_alias_in_apache_config("/etc/apache2/sites-available/.conf", f"/{app_id}")
 
 
 
