@@ -44,6 +44,24 @@ def delete_project(app_id, gcloud_password):
 
 delete_project(app_id, gcloud_password)
 
+def rm_alias_in_apache_config(config_file_path, alias_path):
+    password = "<password>"  # Replace with the actual sudo password
+
+    # Grant write permissions to the config file
+    subprocess.run(f"echo '{password}' | sudo -S chmod +w {config_file_path}", shell=True, check=True)
+
+    # Remove the specified alias and its related lines
+    command = (
+        f"echo '{password}' | sudo -S sed -i '/# {alias_path} begin/,/# {alias_path} end/d' {config_file_path}"
+    )
+    subprocess.run(command, shell=True, check=True)
+
+    # Revoke write permissions from the config file
+    subprocess.run(f"echo '{password}' | sudo -S chmod -w {config_file_path}", shell=True, check=True)
+
+rm_alias_in_apache_config("/etc/apache2/sites-available/.conf", f"/{app_id}", f"/var/www/html/{app_id}/public")
+
+
 
 def send_email_to_client(email, subject, message):
     """Send email"""
