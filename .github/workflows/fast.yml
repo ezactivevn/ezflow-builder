@@ -87,6 +87,9 @@ jobs:
 
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
+      
+      - name: Run Slack script
+        run: python slack.py ${{ github.event.inputs.app_id }} 1 client
 
   notify-on-failure:
     runs-on: ubuntu-latest
@@ -110,3 +113,6 @@ jobs:
 
       - name: Run sendmail.py
         run: python sendmail.py ${{ github.event.inputs.app_id }} 0
+
+      - name: Run Slack script
+        run: python slack.py ${{ github.event.inputs.app_id }} 1 client
