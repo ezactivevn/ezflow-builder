@@ -109,8 +109,6 @@ def copy_file_to_cache(file_path):
         shutil.copy(file_path, f"{project_dir}/client/src/app/app-config.ts")
     elif "environment" in file_path:
         shutil.copy(file_path, f"{project_dir}/client/src/environments/environment.prod.ts")
-    elif "init" in file_path:
-        shutil.copy(file_path, f"{project_dir}/server/base_data/init.sql")
     elif "env.txt" in file_path:
         shutil.copy(file_path, f"{project_dir}/server/.env")
     elif "firebase" in file_path:
