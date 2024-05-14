@@ -44,7 +44,7 @@ jobs:
 
       - name: Run Python script
         run: |
-          python your_script.py ${{ env.CACHE_DIR }}
+          python runscript.py ${{ env.CACHE_DIR }}
 
 
       # - name: Set up Node.js
