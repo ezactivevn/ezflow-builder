@@ -32,6 +32,31 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
+
+      - name: Cache node modules
+        id: cache_node_modules
+        uses: actions/cache@v2
+        with:
+          path: client/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+        if: steps.cache_node_modules.outputs.cache-hit != 'true'
+        
+      - name: Cache Firebase tools
+        id: cache_firebase_tools
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/firebase_tools
+          key: ${{ runner.os }}-firebase-tools-${{ hashFiles('firebase_tools.json') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-tools-
+        if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
+
       - name: Define cache directory and repository URL
         run: |
           echo "REPO_URL=https://github.com/ezactivevn/ezleague-core.git" >> $GITHUB_ENV
