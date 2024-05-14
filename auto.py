@@ -98,8 +98,7 @@ def replace_config_filepath(filepath, key, value):
     
 
     
-def copy_file_to_cache(file_path):
-    project_dir= '../ezleague-core/'
+def copy_file_to_cache(file_path, project_dir):
     """Copy file to cache"""
     # if filename contains variables
     if "variables" in file_path:
@@ -139,7 +138,7 @@ def main(cache_dir):
             for key, value in app_info.__dict__.items():
                 print(key, ":", value)  
                 replace_config_filepath(file_path, key, value)
-                copy_file_to_cache(file_path)
+                copy_file_to_cache(file_path, cache_dir)
 
     build_client(cache_dir)
 
