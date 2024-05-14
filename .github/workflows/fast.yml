@@ -37,12 +37,15 @@ jobs:
 
       - name: Clone the repository if cache is not hit
         if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GH_PAT: ${{ secrets.PAT_TOKEN }}
         run: |
-          git clone ${{ env.REPO_URL }} ${{ env.CACHE_DIR }}
+          git clone https://${GH_PAT}@github.com/ezactivevn/ezleague-core.git ${{ env.CACHE_DIR }}
 
       - name: Run Python script
         run: |
-          python runscript.py ${{ env.CACHE_DIR }}
+          python your_script.py ${{ env.CACHE_DIR }}
+
 
       # - name: Set up Node.js
       #   uses: actions/setup-node@v3
@@ -94,4 +97,4 @@ jobs:
           pip install pusher
 
       - name: Run Slack script
-        run: python slack.py ${{ github.event.inputs.app_id }} 1 client
+        run: python slack.py ${{ github.event.inputs.app_id }} 0 client
