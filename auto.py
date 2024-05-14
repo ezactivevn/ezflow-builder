@@ -121,7 +121,7 @@ def build_client(cache_dir):
     """Build client"""
     # check node_modules exist
     if not os.path.exists(f"{cache_dir}/client/node_modules"):
-        os.system(f"cd {cache_dir}/client && npm install")
+        os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps")
     os.system(f"cd {cache_dir}/client && npm run build")
 
 def main(cache_dir):
