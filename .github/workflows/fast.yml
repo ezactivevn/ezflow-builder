@@ -40,11 +40,11 @@ jobs:
         env:
           GH_PAT: ${{ secrets.PAT_TOKEN }}
         run: |
-          git clone https://${GH_PAT}@github.com/ezactivevn/ezleague-core.git ${{ env.CACHE_DIR }}
+          git clone --branch feature/quick_build https://${GH_PAT}@github.com/ezactivevn/ezleague-core.git ${{ env.CACHE_DIR }}
 
       - name: Run Python script
         run: |
-          python runscript.py ${{ env.CACHE_DIR }}
+          python auto.py ${{ env.CACHE_DIR }}
 
 
       # - name: Set up Node.js
