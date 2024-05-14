@@ -35,7 +35,7 @@ class MyApp:
     def get_display_field(self):
         self.display_field.get_self()
         
-
+# child class from MyApp
 class DisplayField:
     def __init__(self, data):
         self.color_scheme = data.get("color_scheme")
@@ -121,7 +121,7 @@ def build_client(cache_dir):
     """Build client"""
     # check node_modules exist
     if not os.path.exists(f"{cache_dir}/client/node_modules"):
-        os.system("cd {cache_dir}/client && npm install")
+        os.system(f"cd {cache_dir}/client && npm install")
     os.system(f"cd {cache_dir}/client && npm run build")
 
 def main(cache_dir):
