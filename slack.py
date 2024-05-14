@@ -31,7 +31,9 @@ slack_channel = "#ezflow"
 # Set the message you want to send
 success = "SUCCESS" if status == "1" else "FAIL"
 now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-message_text = f":smile::smile::smile: \n Project *{app_id}* has been build *{success}* on *{sys.argv[3]}* at *{now}*"
+fun_text = f":smile::smile::smile: \n Project *{app_id}* has been build *{success}* on *{sys.argv[3]}* at *{now}*"
+sad_text = f":sob::sob::sob: \n Project *{app_id}* has been build *{success}* on *{sys.argv[3]}* at *{now}*"
 
+message_text = fun_text if status == "1" else sad_text
 # Call the function to send the message
 send_slack_message(slack_token, slack_channel, message_text)
