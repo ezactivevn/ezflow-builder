@@ -117,10 +117,15 @@ def copy_file_to_cache(file_path, project_dir):
     elif "laravel-worker" in file_path:
         shutil.copy(file_path, f"{project_dir}/server/supervisor/laravel-worker.conf")
 
+def check_node_modules():
+        is_cached = os.path.isdir("client/node_modules")
+        is_cached_in_cache = os.path.exists("~/.npm")
+        return is_cached and is_cached_in_cache
+
 def build_client(cache_dir):
     """Build client"""
     # check node_modules exist
-    if not os.path.exists(f"{cache_dir}/client/node_modules"):
+    if not check_node_modules():
         os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps")
     os.system(f"cd {cache_dir}/client && npm run build")
 
