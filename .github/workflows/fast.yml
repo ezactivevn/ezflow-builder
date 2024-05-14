@@ -35,7 +35,7 @@ jobs:
       - name: Define cache directory and repository URL
         run: |
           echo "REPO_URL=https://github.com/ezactivevn/ezleague-core.git" >> $GITHUB_ENV
-          echo "CACHE_DIR=cache" >> $GITHUB_ENV
+          echo "CACHE_DIR=cloned_repo" >> $GITHUB_ENV
 
       - name: Restore cache
         id: cache

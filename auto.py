@@ -146,14 +146,8 @@ def main(cache_dir):
     build_client(cache_dir)
 
     
-
-    
-    
-
-    
-
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("Usage: python runscript.py <cache_dir>")
         sys.exit(1)
     cache_dir = sys.argv[1]
