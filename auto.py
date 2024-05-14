@@ -119,7 +119,10 @@ def copy_file_to_cache(file_path, project_dir):
 
 def build_client(cache_dir):
     """Build client"""
-    os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps && npm run build")
+    # check node_modules exist
+    if not os.path.exists(f"{cache_dir}/client/node_modules"):
+        os.system("cd {cache_dir}/client && npm install")
+    os.system(f"cd {cache_dir}/client && npm run build")
 
 def main(cache_dir):
     # Get info from ezflow
