@@ -119,7 +119,7 @@ def copy_file_to_cache(file_path, project_dir):
 
 def build_client(cache_dir):
     """Build client"""
-    os.system(f"cd {cache_dir}/client && npm install && npm run build")
+    os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps && npm run build")
 
 def main(cache_dir):
     # Get info from ezflow
@@ -140,7 +140,6 @@ def main(cache_dir):
                 replace_config_filepath(file_path, key, value)
                 copy_file_to_cache(file_path, cache_dir)
 
-    build_client(cache_dir)
 
     
 if __name__ == "__main__":
@@ -149,3 +148,5 @@ if __name__ == "__main__":
         sys.exit(1)
     cache_dir = sys.argv[1]
     main(cache_dir)
+    build_client(cache_dir)
+
