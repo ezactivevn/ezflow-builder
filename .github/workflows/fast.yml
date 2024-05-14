@@ -55,7 +55,7 @@ jobs:
 
       - name: Run Python script
         run: |
-          python auto.py ${{ env.CACHE_DIR }}
+          python auto.py ${{ env.CACHE_DIR }} ${{ github.event.inputs.app_id }}
 
 
       # - name: Set up Node.js
