@@ -132,7 +132,7 @@ def main(cache_dir):
     app_info = my_app.get_app_info()
     
     # test_cache_dir = '../ezleague-core/replacefiles/'
-    test_cache_dir = 'f{cache_dir}/replacefiles/'
+    test_cache_dir = f'{cache_dir}/replacefiles/'
     # loop in test_cache_dir
     for filename in os.listdir(test_cache_dir):
         if filename.endswith(".txt"):
