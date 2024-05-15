@@ -55,6 +55,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Use your requirements file name
 
+      - name: Cache node modules
+        id: cache_node_modules
+        uses: actions/cache@v2
+        with:
+          path: client/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+        if: steps.cache_node_modules.outputs.cache-hit != 'true'
+
+      - name: Cache Firebase tools
+        id: cache_firebase_tools
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/firebase_tools
+          key: ${{ runner.os }}-firebase-tools
+        if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
+
+      - name: Cache dist build
+        id: cache_dist
+        uses: actions/cache@v2
+        with:
+          path: client/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dist-
+        if: steps.cache_dist.outputs.cache-hit != 'true'
+
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
