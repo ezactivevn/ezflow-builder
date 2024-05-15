@@ -4,6 +4,14 @@ import sys
 
 app_id = sys.argv[1]
 
+def unzip_file_to_dir(file_path, project_dir):
+    """Unzip file to dir"""
+    command = f"cd {file_path} && unzip {file_path}/server.zip -d {project_dir}"
+
+    os.system(command)
+
+
+
 def _replace_config_filepath(filepath, key, value):
         """ Find string @@key to replace"""
 
@@ -21,7 +29,7 @@ def _copy_file_to_cache(file_path, project_dir):
     if "env.txt" in file_path:
         shutil.copy(file_path, f"{project_dir}/server/.env")
 
-def replace_and_copy_files(self, cache_dir, app_info):
+def replace_and_copy_files( cache_dir, app_info):
 
         test_cache_dir = os.path.join(cache_dir, 'replacefiles')
         try:
@@ -37,14 +45,15 @@ def replace_and_copy_files(self, cache_dir, app_info):
         except Exception as e:
             print(f"Error: {e}")
 
+     
+
 
 def main():
-    zip_path = f"/var/www/html/server.zip"
-
-    shutil.unpack_archive(zip_path, f"/var/www/html{app_id}")
-
-    replace_and_copy_files(app_id, app_id)
-
+    file_path = f"/var/www/html/"
+    project_dir = f"{file_path}{app_id}"
+    unzip_file_to_dir(file_path, project_dir)
+    replace_and_copy_files(project_dir, app_id)
+    
 
 # main
 if __name__ == "__main__":
