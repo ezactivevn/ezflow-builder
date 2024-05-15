@@ -3,6 +3,9 @@ import os
 import requests
 import shutil
 import json
+import paramiko
+from scp import SCPClient
+
 
 app_id = sys.argv[2]
 
@@ -54,7 +57,52 @@ class DisplayField:
 
     def get_self(self):
         return self
+
+# copy Gcloud 
+class GCloudCopy:
+    def __init__(self, local_file_path, remote_file_path, hostname, port=22, username="mchoang98", private_key_path="./id_rsa", private_key_password="Phulata123"):
+        self.local_file_path = local_file_path
+        self.remote_file_path = remote_file_path
+        self.hostname = hostname
+        self.port = port
+        self.username = username
+        self.private_key_path = private_key_path
+        self.private_key_password = private_key_password
+
+    def _load_private_key(self):
+        return paramiko.RSAKey.from_private_key_file(self.private_key_path, password=self.private_key_password)
+
+    def _connect_ssh(self):
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(
+            hostname=self.hostname,
+            port=self.port,
+            username=self.username,
+            pkey=self._load_private_key(),
+            timeout=10
+        )
+        return ssh_client
     
+    def _ensure_remote_path_exists(self, ssh_client):
+        sftp = ssh_client.open_sftp()
+        try:
+            sftp.stat(self.remote_file_path)
+        except FileNotFoundError:
+            sftp.mkdir(self.remote_file_path)
+        sftp.close()
+
+    def copy_to_gcloud(self):
+        ssh_client = self._connect_ssh()
+        self._ensure_remote_path_exists(ssh_client)
+        with SCPClient(ssh_client.get_transport()) as scp:
+            print(f"Copying {self.local_file_path} to {self.remote_file_path}")
+            if os.path.isdir(self.local_file_path):
+                scp.put(self.local_file_path, self.remote_file_path, recursive=True)
+            else:
+                scp.put(self.local_file_path, self.remote_file_path)
+        ssh_client.close()
+
     
 def fetch_data_from_api(api_url, data, headers):
         """Fetch data from API"""
@@ -137,7 +185,11 @@ def main(cache_dir):
     app_info = my_app.get_app_info()
     
     # test_cache_dir = '../ezleague-core/replacefiles/'
+    if sys.argv[1] == "test":
+        cache_dir = '../ezleague-core/'
+
     test_cache_dir = f'{cache_dir}/replacefiles/'
+
     # loop in test_cache_dir
     for filename in os.listdir(test_cache_dir):
         if filename.endswith(".txt"):
@@ -148,6 +200,22 @@ def main(cache_dir):
                 replace_config_filepath(file_path, key, value)
                 copy_file_to_cache(file_path, cache_dir)
 
+    # copying file to server
+    server_dir = f"{cache_dir}/server"
+    #loop in server_dir
+    for filename in os.listdir(server_dir):
+        file_path = os.path.join(server_dir, filename)
+        local_file_path = file_path
+        remote_file_path = f"/var/www/html/{app_id}"
+        hostname = "34.150.91.16"
+        username = "mchoang98"
+        id_rsa = f"{cache_dir}/id_rsa"
+        private_key_password = "Phulata123"
+        mycloud = GCloudCopy(local_file_path, remote_file_path, hostname, port=22, username=f"{username}", private_key_path=f"{id_rsa}", private_key_password=f"{private_key_password}")
+        try :
+            mycloud.copy_to_gcloud()
+        except Exception as e:
+            print(f"Error: {e}")
 
     
 if __name__ == "__main__":
