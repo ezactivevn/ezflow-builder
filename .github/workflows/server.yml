@@ -6,10 +6,6 @@ on:
         description: 'Application ID'
         required: true
         default: 'unknown'
-      repo_url:
-        description: 'Repository URL'
-        required: true
-        default: 'unknown'
 
 jobs:
   build:
@@ -60,6 +56,9 @@ jobs:
           echo "PAT_TOKEN=$PAT_TOKEN" >> $GITHUB_ENV
           echo "FIREBASE_TOKEN=$FIREBASE_TOKEN" >> $GITHUB_ENV
           echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
+      
+      - name: Unzip and replace
+        run: python auto.py ${{ github.event.inputs.app_id }}
  
       - name: Remove folder server
         run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}

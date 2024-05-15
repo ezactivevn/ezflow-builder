@@ -1,4 +1,4 @@
-name: Fastbuild Workflow 
+name: Client Workflow
 
 on:
   workflow_dispatch:
@@ -13,81 +13,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
-      
-      - name: Cache pip dependencies
-        uses: actions/cache@v2
+          python-version: 3.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
-            path: ~/.cache/pip
-            key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-            restore-keys: |
-              ${{ runner.os }}-pip-
-    
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+          ref: feature/fastbuild
+          repository: ezactivevn/ezleague-core
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name Phu Hoang
+          git config --global user.email ${{ vars.EMAIL }}
+
+      - name: Authenticate with GitHub
+        env:
+          TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: echo "machine github.com login ${{vars.USERNAME}} password $TOKEN" > ~/.netrc
 
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
           node-version: "18.x"
 
-      - name: Cache node modules
-        id: cache_node_modules
+      - name: Cache dependencies
+        id: cache_python
         uses: actions/cache@v2
         with:
-          path: client/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json') }}
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
-        if: steps.cache_node_modules.outputs.cache-hit != 'true'
-        
-      - name: Cache Firebase tools
-        id: cache_firebase_tools
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/firebase_tools
-          key: ${{ runner.os }}-firebase-tools-${{ hashFiles('firebase_tools.json') }}
-          restore-keys: |
-            ${{ runner.os }}-firebase-tools-
-        if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
+            ${{ runner.os }}-pip-
+        if: steps.cache_python.outputs.cache-hit != 'true'
 
-      - name: Define cache directory and repository URL
+
+      - name: Install dependencies
         run: |
-          echo "REPO_URL=https://github.com/ezactivevn/ezleague-core.git" >> $GITHUB_ENV
-          echo "CACHE_DIR=cloned_repo" >> $GITHUB_ENV
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Use your requirements file name
 
-      - name: Restore cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: ${{ runner.os }}-project-cache
-          restore-keys: |
-            ${{ runner.os }}-project-cache
-
-      - name: Clone the repository if cache is not hit
-        if: steps.cache.outputs.cache-hit != 'true'
-        env:
-          GH_PAT: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git clone --branch feature/quick_build https://${GH_PAT}@github.com/ezactivevn/ezleague-core.git ${{ env.CACHE_DIR }}
+      - name: Run Gcloud 
+        run: python autobuild.py ${{ github.event.inputs.app_id }}
 
       - name: Run Python script
-        run: |
-          python auto.py ${{ env.CACHE_DIR }} ${{ github.event.inputs.app_id }}
-
-
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '14'
-
+        run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
   notify-on-success:
     runs-on: ubuntu-latest
@@ -131,6 +104,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Use your requirements file name
           pip install pusher
-
-      - name: Run Slack script
+          
+      - name: Run sendmail.py
+        run: python sendmail.py ${{ github.event.inputs.app_id }} 0
+      
+      - name: Run slack.py
         run: python slack.py ${{ github.event.inputs.app_id }} 0 client

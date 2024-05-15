@@ -5,9 +5,10 @@ import shutil
 import json
 import paramiko
 from scp import SCPClient
+from zipfile import ZipFile
 
 
-app_id = sys.argv[2]
+app_id = sys.argv[1]
 
 
 class MyApp:
@@ -59,10 +60,8 @@ class DisplayField:
         return self
 
 # copy Gcloud 
-class GCloudCopy:
-    def __init__(self, local_file_path, remote_file_path, hostname, port=22, username="mchoang98", private_key_path="./id_rsa", private_key_password="Phulata123"):
-        self.local_file_path = local_file_path
-        self.remote_file_path = remote_file_path
+class GCloud:
+    def __init__(self, hostname, port=22, username="mchoang98", private_key_path="./id_rsa", private_key_password="Phulata123"):
         self.hostname = hostname
         self.port = port
         self.username = username
@@ -84,26 +83,72 @@ class GCloudCopy:
         )
         return ssh_client
     
-    def _ensure_remote_path_exists(self, ssh_client):
+    def _ensure_remote_path_exists(self, ssh_client, remote_file_path):
         sftp = ssh_client.open_sftp()
         try:
-            sftp.stat(self.remote_file_path)
+            sftp.stat(remote_file_path)
         except FileNotFoundError:
-            sftp.mkdir(self.remote_file_path)
+            sftp.mkdir(remote_file_path)
         sftp.close()
 
-    def copy_to_gcloud(self):
+    def copy_to_gcloud(self, local_file_path, remote_file_path):
         ssh_client = self._connect_ssh()
-        self._ensure_remote_path_exists(ssh_client)
+        self._ensure_remote_path_exists(ssh_client, remote_file_path)
         with SCPClient(ssh_client.get_transport()) as scp:
-            print(f"Copying {self.local_file_path} to {self.remote_file_path}")
-            if os.path.isdir(self.local_file_path):
-                scp.put(self.local_file_path, self.remote_file_path, recursive=True)
+            print(f"Copying {local_file_path} to {remote_file_path}")
+            if os.path.isdir(local_file_path):
+                scp.put(local_file_path, remote_file_path, recursive=True)
             else:
-                scp.put(self.local_file_path, self.remote_file_path)
+                scp.put(local_file_path, remote_file_path)
         ssh_client.close()
 
+    def extract_zip(self, remote_file_path, destination_path):
+        ssh_client = self._connect_ssh()
+        # Ensure that the destination directory exists on the remote server
+        ssh_client.exec_command(f"mkdir -p {destination_path}")
+        with SCPClient(ssh_client.get_transport()) as scp:
+            # Download the zip file from the remote server
+            scp.get(remote_file_path, destination_path)
+        # Execute unzip command on the remote server
+        stdin, stdout, stderr = ssh_client.exec_command(f"unzip {remote_file_path} -d {destination_path}")
+        # log the output
+        print(stdout.read().decode())
+        # Wait for the command to finish
+        stdout.channel.recv_exit_status()
+        # Close the SSH connection after executing the command
+        ssh_client.close()
+        print(f"Extracted zip file from {remote_file_path} to {destination_path}")   
+
+    def _replace_config_filepath(filepath, key, value):
+        """ Find string @@key to replace"""
+
+        # Find string @@key to replace
+
+        with open(f"{filepath}", "r", encoding="utf-8") as f:
+            content = f.read()
+            new_content = content.replace("@@" + key, str(value))
+            with open(f"{filepath}", "w", encoding="utf-8") as f:
+                f.write(new_content)
+
+    def _copy_file_to_cache(file_path, project_dir):
+        """Copy file to cache"""
+        # if filename contains variables
+        if "env.txt" in file_path:
+            shutil.copy(file_path, f"{project_dir}/server/.env")
     
+    def replace_and_copy_files(self, cache_dir, app_info):
+        test_cache_dir = os.path.join(cache_dir, 'replacefiles')
+
+        # loop in test_cache_dir
+        for filename in os.listdir(test_cache_dir):
+            if filename.endswith(".txt"):
+                file_path = os.path.join(test_cache_dir, filename)
+                print("File path:", file_path)
+                for key, value in app_info.__dict__.items():
+                    print(key, ":", value)  
+                    self._replace_config_filepath(file_path, key, value)
+                    self._copy_file_to_cache(file_path, cache_dir)
+
 def fetch_data_from_api(api_url, data, headers):
         """Fetch data from API"""
 
@@ -129,101 +174,28 @@ def get_info_from_ezflow(app_id):
         "Content-Type": "application/x-www-form-urlencoded"
     }
     
-    result =  fetch_data_from_api(ezflow_url, data, headers)
+    result = fetch_data_from_api(ezflow_url, data, headers)
     return result['data'][0]
 
-def replace_config_filepath(filepath, key, value):
-    """ Find string @@key to replace"""
 
-    # Find string @@key to replace
 
-    with open(f"{filepath}", "r", encoding="utf-8") as f:
-        content = f.read()
-        new_content = content.replace("@@" + key, str(value))
-        with open(f"{filepath}", "w", encoding="utf-8") as f:
-            f.write(new_content)
-
-    
-
-    
-def copy_file_to_cache(file_path, project_dir):
-    """Copy file to cache"""
-    # if filename contains variables
-    if "variables" in file_path:
-        # Copy file to cache
-        shutil.copy(file_path, f"{project_dir}/client/src/assets/scss/variables/_variables.scss")
-    elif "app-config" in file_path:
-        shutil.copy(file_path, f"{project_dir}/client/src/app/app-config.ts")
-    elif "environment" in file_path:
-        shutil.copy(file_path, f"{project_dir}/client/src/environments/environment.prod.ts")
-    elif "env.txt" in file_path:
-        shutil.copy(file_path, f"{project_dir}/server/.env")
-    elif "firebase" in file_path:
-        shutil.copy(file_path, f"{project_dir}/client/firebase.json")
-    elif "capacitor" in file_path:
-        shutil.copy(file_path, f"{project_dir}/client/capacitor.config.ts")
-    elif "laravel-worker" in file_path:
-        shutil.copy(file_path, f"{project_dir}/server/supervisor/laravel-worker.conf")
-
-def check_node_modules():
-        is_cached = os.path.isdir("client/node_modules")
-        is_cached_in_cache = os.path.exists("~/.npm")
-        return is_cached and is_cached_in_cache
-
-def build_client(cache_dir):
-    """Build client"""
-    print ("Building client...")
-    # check node_modules exist
-    if not check_node_modules():
-        os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps")
-    os.system(f"cd {cache_dir}/client && npm run build")
-
-def main(cache_dir):
+def main():
     # Get info from ezflow
     data = get_info_from_ezflow(app_id)
     my_app = MyApp(data)
-    
     app_info = my_app.get_app_info()
-    
-    # test_cache_dir = '../ezleague-core/replacefiles/'
-    if sys.argv[1] == "test":
-        cache_dir = '../ezleague-core/'
 
-    test_cache_dir = f'{cache_dir}/replacefiles/'
+    my_cloud = GCloud()
+    my_cloud.extract_zip("/var/www/html/server.zip", f"/var/www/html/{app_id}")
+    my_cloud.replace_and_copy_files(f"/var/www/html/{app_id}", app_info)
 
-    # loop in test_cache_dir
-    for filename in os.listdir(test_cache_dir):
-        if filename.endswith(".txt"):
-            file_path = os.path.join(test_cache_dir, filename)
-            print("File path: ", file_path)
-            for key, value in app_info.__dict__.items():
-                print(key, ":", value)  
-                replace_config_filepath(file_path, key, value)
-                copy_file_to_cache(file_path, cache_dir)
+   
 
-    # copying file to server
-    server_dir = f"{cache_dir}/server"
-    #loop in server_dir
-    for filename in os.listdir(server_dir):
-        file_path = os.path.join(server_dir, filename)
-        local_file_path = file_path
-        remote_file_path = f"/var/www/html/{app_id}"
-        hostname = "34.150.91.16"
-        username = "mchoang98"
-        id_rsa = f"{cache_dir}/id_rsa"
-        private_key_password = "Phulata123"
-        mycloud = GCloudCopy(local_file_path, remote_file_path, hostname, port=22, username=f"{username}", private_key_path=f"{id_rsa}", private_key_password=f"{private_key_password}")
-        try :
-            mycloud.copy_to_gcloud()
-        except Exception as e:
-            print(f"Error: {e}")
-
-    
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    if len(sys.argv) <= 0:
         print("Usage: python runscript.py <cache_dir>")
         sys.exit(1)
-    cache_dir = sys.argv[1]
-    main(cache_dir)
-    # build_client(cache_dir)
+
+    main()
+    
 
