@@ -103,8 +103,6 @@ class GCloud:
 
     def extract_zip(self, remote_file_path, destination_path):
         ssh_client = self._connect_ssh()
-        # Ensure that the destination directory exists on the remote server
-        ssh_client.exec_command(f"mkdir -p {destination_path}")
         with SCPClient(ssh_client.get_transport()) as scp:
             # Download the zip file from the remote server
             scp.get(remote_file_path, destination_path)
@@ -136,17 +134,20 @@ class GCloud:
             shutil.copy(file_path, f"{project_dir}/server/.env")
     
     def replace_and_copy_files(self, cache_dir, app_info):
-        test_cache_dir = os.path.join(cache_dir, 'replacefiles')
 
-        # loop in test_cache_dir
-        for filename in os.listdir(test_cache_dir):
-            if filename.endswith(".txt"):
-                file_path = os.path.join(test_cache_dir, filename)
-                print("File path:", file_path)
-                for key, value in app_info.__dict__.items():
-                    print(key, ":", value)  
-                    self._replace_config_filepath(file_path, key, value)
-                    self._copy_file_to_cache(file_path, cache_dir)
+        test_cache_dir = os.path.join(cache_dir, 'replacefiles')
+        try:
+            # loop in test_cache_dir
+            for filename in os.listdir(test_cache_dir):
+                if filename.endswith(".txt"):
+                    file_path = os.path.join(test_cache_dir, filename)
+                    print("File path:", file_path)
+                    for key, value in app_info.__dict__.items():
+                        print(key, ":", value)  
+                        self._replace_config_filepath(file_path, key, value)
+                        self._copy_file_to_cache(file_path, cache_dir)
+        except Exception as e:
+            print(f"Error: {e}")
 
 def fetch_data_from_api(api_url, data, headers):
         """Fetch data from API"""
