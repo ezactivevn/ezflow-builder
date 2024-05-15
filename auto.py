@@ -106,15 +106,26 @@ class GCloud:
         with SCPClient(ssh_client.get_transport()) as scp:
             # Download the zip file from the remote server
             scp.get(remote_file_path, destination_path)
+        
+        # Construct the directory path for extraction
+        app_directory = f"{destination_path}/{app_id}"
+        
+        # Ensure the destination directory exists on the remote server
+        ssh_client.exec_command(f"mkdir -p {app_directory}")
+        
         # Execute unzip command on the remote server
-        stdin, stdout, stderr = ssh_client.exec_command(f"unzip {remote_file_path} -d {destination_path}")
-        # log the output
+        stdin, stdout, stderr = ssh_client.exec_command(f"unzip {remote_file_path} -d {app_directory}")
+        
+        # Log the output
         print(stdout.read().decode())
+        
         # Wait for the command to finish
         stdout.channel.recv_exit_status()
+        
         # Close the SSH connection after executing the command
         ssh_client.close()
-        print(f"Extracted zip file from {remote_file_path} to {destination_path}")   
+        
+        print(f"Extracted zip file from {remote_file_path} to {app_directory}")   
 
     def _replace_config_filepath(filepath, key, value):
         """ Find string @@key to replace"""
@@ -188,7 +199,8 @@ def main():
     my_cloud = GCloud(
         hostname="34.150.91.16"   
     )
-    my_cloud.extract_zip("/var/www/html/server.zip", f"/var/www/html/{app_id}")
+    
+    my_cloud.extract_zip("/var/www/html/server.zip", f"/var/www/html")
     my_cloud.replace_and_copy_files(f"/var/www/html/{app_id}", app_info)
 
    
