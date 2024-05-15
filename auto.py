@@ -1,14 +1,26 @@
 import os
 import shutil
 import sys
+import subprocess
 
 app_id = sys.argv[1]
 
 def unzip_file_to_dir(file_path, project_dir):
     """Unzip file to dir"""
-    command = f"cd {file_path} && unzip {file_path}/server.zip -d {project_dir}"
-
-    os.system(command)
+    zip_file = os.path.join(file_path, 'server.zip')
+    
+    # Ensure the project directory exists
+    os.makedirs(project_dir, exist_ok=True)
+    
+    # Construct the command
+    command = ['unzip', zip_file, '-d', project_dir]
+    
+    # Execute the command
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Error unzipping file: {e.stderr}")
 
 
 
@@ -50,7 +62,7 @@ def replace_and_copy_files( cache_dir, app_info):
 
 def main():
     file_path = f"/var/www/html/"
-    project_dir = f"{file_path}{app_id}"
+    project_dir = os.path.join(file_path, app_id)
     unzip_file_to_dir(file_path, project_dir)
     replace_and_copy_files(project_dir, app_id)
     
