@@ -19,7 +19,6 @@ class MyApp:
         self.app_logo = data.get("app_logo")
         self.color_scheme = data.get("color_scheme")
         self.sport_type = data.get("sport_type")
-        self.is_streaming = bool(int(data.get("is_streaming")))
         self.is_validation_required = bool(int(data.get("isValidationRequired")))
         self.is_validate_control = bool(int(data.get("isValidateControl")))
         self.is_trial_required = bool(int(data.get("isTrialRequired")))
