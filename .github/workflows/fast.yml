@@ -1,4 +1,4 @@
-name: Client Workflow
+name: Fastbuild Workflow
 
 on:
   workflow_dispatch:
