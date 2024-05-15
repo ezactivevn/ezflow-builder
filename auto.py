@@ -63,7 +63,6 @@ def replace_and_copy_files( cache_dir, app_info):
 def main():
     file_path = f"/var/www/html/"
     project_dir = os.path.join(file_path, app_id)
-    unzip_file_to_dir(file_path, project_dir)
     replace_and_copy_files(project_dir, app_id)
     
 

@@ -65,8 +65,8 @@ jobs:
           echo "FIREBASE_TOKEN=$FIREBASE_TOKEN" >> $GITHUB_ENV
           echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
       
-      - name: Unzip and replace
-        run: python auto.py ${{ github.event.inputs.app_id }}
+      - name: Unzip server.zip to app_id
+        run: cd /var/www/html && unzip server.zip -d ${{ github.event.inputs.app_id }}
  
       - name: Remove folder server
         run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
