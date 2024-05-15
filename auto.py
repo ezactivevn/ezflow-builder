@@ -225,5 +225,5 @@ if __name__ == "__main__":
         sys.exit(1)
     cache_dir = sys.argv[1]
     main(cache_dir)
-    build_client(cache_dir)
+    # build_client(cache_dir)
 
