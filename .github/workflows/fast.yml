@@ -49,15 +49,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
         if: steps.cache_python.outputs.cache-hit != 'true'
-
-
+        
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Use your requirements file name
-
-      - name: Run Gcloud 
-        run: python autobuild.py ${{ github.event.inputs.app_id }}
 
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
