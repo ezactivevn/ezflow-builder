@@ -172,6 +172,7 @@ def check_node_modules():
 
 def build_client(cache_dir):
     """Build client"""
+    print ("Building client...")
     # check node_modules exist
     if not check_node_modules():
         os.system(f"cd {cache_dir}/client && npm install --legacy-peer-deps")
