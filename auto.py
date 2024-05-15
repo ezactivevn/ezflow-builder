@@ -184,7 +184,9 @@ def main():
     my_app = MyApp(data)
     app_info = my_app.get_app_info()
 
-    my_cloud = GCloud()
+    my_cloud = GCloud(
+        hostname="34.150.91.16"   
+    )
     my_cloud.extract_zip("/var/www/html/server.zip", f"/var/www/html/{app_id}")
     my_cloud.replace_and_copy_files(f"/var/www/html/{app_id}", app_info)
 
