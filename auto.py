@@ -103,10 +103,6 @@ class GCloud:
 
     def extract_zip(self, remote_file_path, destination_path):
         ssh_client = self._connect_ssh()
-        with SCPClient(ssh_client.get_transport()) as scp:
-            # Download the zip file from the remote server
-            scp.get(remote_file_path, destination_path)
-        
         # Construct the directory path for extraction
         app_directory = f"{destination_path}/{app_id}"
         
@@ -199,7 +195,7 @@ def main():
     my_cloud = GCloud(
         hostname="34.150.91.16"   
     )
-    
+
     my_cloud.extract_zip("/var/www/html/server.zip", f"/var/www/html")
     my_cloud.replace_and_copy_files(f"/var/www/html/{app_id}", app_info)
 
