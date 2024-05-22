@@ -53,6 +53,7 @@ jobs:
         run: python auto.py
         env: 
           APP_ID: ${{ github.event.inputs.app_id }}
+          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
 
       - name: Set up environment variables
         run: |

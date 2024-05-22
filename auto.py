@@ -5,15 +5,25 @@ import shutil
 import subprocess
 
 app_id = os.environ.get('APP_ID')
+sudo_password = os.environ.get('GCLOUD_PASSWORD')
 
 logging.basicConfig(level=logging.DEBUG)
 
 def unzip_file(zip_path, extract_to):
     try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
+        # Ensure the target directory exists
+        if not os.path.exists(extract_to):
+            os.makedirs(extract_to)
+        
+        # Unzipping requires sudo
+        command = f"echo {sudo_password} | sudo -S unzip -o {zip_path} -d {extract_to}"
+        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
+        logging.info(f"Successfully extracted {zip_path} to {extract_to}")
+        
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error unzipping file with sudo: {e}")
     except Exception as e:
-        logging.error(e)
+        logging.error(f"An unexpected error occurred: {e}")
 
 
 
