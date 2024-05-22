@@ -9,20 +9,11 @@ app_id = os.environ.get('APP_ID')
 logging.basicConfig(level=logging.DEBUG)
 
 def unzip_file(zip_path, extract_to):
-    logging.info(f"Unzipping file: {zip_path} to {extract_to}")
-    if not os.path.exists(zip_path):
-        logging.error(f"Zip file does not exist: {zip_path}")
-        return
-
-    if not os.path.exists(extract_to):
-        logging.info(f"Creating directory: {extract_to}")
-        os.makedirs(extract_to)
-
     try:
-        subprocess.run(['sudo', 'unzip', '-o', zip_path, '-d', extract_to], check=True)
-        logging.info("Unzipping completed successfully.")
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error unzipping file: {e}")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+    except Exception as e:
+        logging.error(e)
 
 
 
