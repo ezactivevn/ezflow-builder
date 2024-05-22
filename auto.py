@@ -1,27 +1,30 @@
+import logging
 import os
+import zipfile
 import shutil
-import sys
-import subprocess
 
-# app id from env
 app_id = os.environ.get('APP_ID')
 
-def unzip_file_to_dir(file_path, project_dir):
-    """Unzip file to dir"""
-    zip_file = os.path.join(file_path, 'server.zip')
-    
-    # Ensure the project directory exists
-    os.makedirs(project_dir, exist_ok=True)
-    
-    # Construct the command
-    command = ['unzip', zip_file, '-d', project_dir]
-    
-    # Execute the command
+logging.basicConfig(level=logging.DEBUG)
+
+def unzip_file(zip_path, extract_to):
+    logging.info(f"Unzipping file: {zip_path} to {extract_to}")
+    if not os.path.exists(zip_path):
+        logging.error(f"Zip file does not exist: {zip_path}")
+        return
+
+    if not os.path.exists(extract_to):
+        logging.info(f"Creating directory: {extract_to}")
+        os.makedirs(extract_to)
+
     try:
-        result = subprocess.run(command, check=True, capture_output=True, text=True)
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"Error unzipping file: {e.stderr}")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+        logging.info("Unzipping completed successfully.")
+    except zipfile.BadZipFile:
+        logging.error("Error unzipping file: Bad Zip File")
+    except Exception as e:
+        logging.error(f"Error unzipping file: {e}")
 
 
 
@@ -64,7 +67,8 @@ def replace_and_copy_files( cache_dir, app_info):
 def main():
     file_path = f"/var/www/html/"
     project_dir = os.path.join(file_path, app_id)
-    unzip_file_to_dir(file_path, project_dir)
+
+    unzip_file(f"{file_path}server.zip", project_dir)
     replace_and_copy_files(project_dir, app_id)
     
 
