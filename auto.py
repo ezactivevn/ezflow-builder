@@ -3,7 +3,8 @@ import shutil
 import sys
 import subprocess
 
-app_id = sys.argv[1]
+# app id from env
+app_id = os.environ.get('APP_ID')
 
 def unzip_file_to_dir(file_path, project_dir):
     """Unzip file to dir"""
