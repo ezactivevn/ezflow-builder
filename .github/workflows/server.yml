@@ -51,6 +51,8 @@ jobs:
 
       - name: Run auto.py
         run: python auto.py
+        env: 
+          APP_ID: ${{ github.event.inputs.app_id }}
 
       - name: Set up environment variables
         run: |
