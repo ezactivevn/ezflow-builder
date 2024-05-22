@@ -2,6 +2,7 @@ import logging
 import os
 import zipfile
 import shutil
+import subprocess
 
 app_id = os.environ.get('APP_ID')
 
@@ -18,12 +19,9 @@ def unzip_file(zip_path, extract_to):
         os.makedirs(extract_to)
 
     try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
+        subprocess.run(['sudo', 'unzip', '-o', zip_path, '-d', extract_to], check=True)
         logging.info("Unzipping completed successfully.")
-    except zipfile.BadZipFile:
-        logging.error("Error unzipping file: Bad Zip File")
-    except Exception as e:
+    except subprocess.CalledProcessError as e:
         logging.error(f"Error unzipping file: {e}")
 
 
