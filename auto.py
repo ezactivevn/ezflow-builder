@@ -3,25 +3,43 @@ import os
 import zipfile
 import shutil
 import subprocess
+import tempfile
 
 app_id = os.environ.get('APP_ID')
 sudo_password = os.environ.get('GCLOUD_PASSWORD')
 
 logging.basicConfig(level=logging.DEBUG)
 
-def unzip_file(zip_path, extract_to):
+def unzip_file(zip_path, extract_to, sudo_password):
     try:
-        
-        # Unzipping requires sudo
-        command = f"echo {sudo_password} | sudo -S unzip -o {zip_path} -d {extract_to}"
-        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-        logging.info(f"Successfully extracted {zip_path} to {extract_to}")
-        
+        logging.info(f"Unzipping {zip_path} to a temporary directory")
+
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Unzipping requires sudo
+            command = f"echo {sudo_password} | sudo -S unzip -o {zip_path} -d {temp_dir}"
+            result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
+            logging.info(f"Successfully extracted {zip_path} to temporary directory {temp_dir}")
+
+            # Ensure the target directory exists
+            if not os.path.exists(extract_to):
+                os.makedirs(extract_to)
+
+            # Move contents from the temporary directory to the target directory
+            for item in os.listdir(temp_dir):
+                s = os.path.join(temp_dir, item)
+                d = os.path.join(extract_to, item)
+                if os.path.isdir(s):
+                    shutil.move(s, d)
+                else:
+                    shutil.move(s, extract_to)
+                    
+            logging.info(f"Successfully moved contents to {extract_to}")
+
     except subprocess.CalledProcessError as e:
         logging.error(f"Error unzipping file with sudo: {e}")
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
-
 
 
 def _replace_config_filepath(filepath, key, value):
@@ -64,7 +82,7 @@ def main():
     file_path = f"/var/www/html/"
     project_dir = os.path.join(file_path, app_id)
 
-    unzip_file(f"{file_path}server.zip", project_dir)
+    unzip_file(f"{file_path}/server.zip", project_dir, sudo_password)
     replace_and_copy_files(project_dir, app_id)
     
 
