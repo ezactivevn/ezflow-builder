@@ -34,49 +34,52 @@ def unzip_file(zip_path, extract_to):
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
 
+def copy_files(filepath):
+    try:
+        # if filepath has env
+        if 'env' in filepath:
+            shutil.copyfile(filepath, f"/var/www/html/{app_id}/.env")
 
-def _replace_config_filepath(filepath, key, value):
-        """ Find string @@key to replace"""
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
 
-        # Find string @@key to replace
+        
+        
 
-        with open(f"{filepath}", "r", encoding="utf-8") as f:
-            content = f.read()
-            new_content = content.replace("@@" + key, str(value))
-            with open(f"{filepath}", "w", encoding="utf-8") as f:
-                f.write(new_content)
+def replace_and_copy_files(replace_dir, app_id):
+    try:
+        logging.info(f"Replacing files in {replace_dir}")
 
-def _copy_file_to_cache(file_path, project_dir):
-    """Copy file to cache"""
-    # if filename contains variables
-    if "env.txt" in file_path:
-        shutil.copy(file_path, f"{project_dir}/server/.env")
+        # Replace the files in the project directory
+        for root, dirs, files in os.walk(replace_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # replace @@app_id with app_id
+                with open(file_path, 'r') as f:
+                    file_content = f.read()
+                file_content = file_content.replace('@@app_id', app_id)
+                with open(file_path, 'w') as f:
+                    f.write(file_content)
+                
+                copy_files(file_path, app_id)
 
-def replace_and_copy_files( cache_dir, app_info):
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
 
-        test_cache_dir = os.path.join(cache_dir, 'replacefiles')
-        try:
-            # loop in test_cache_dir
-            for filename in os.listdir(test_cache_dir):
-                if filename.endswith(".txt"):
-                    file_path = os.path.join(test_cache_dir, filename)
-                    print("File path:", file_path)
-                    for key, value in app_info.__dict__.items():
-                        print(key, ":", value)  
-                        _replace_config_filepath(file_path, key, value)
-                        _copy_file_to_cache(file_path, cache_dir)
-        except Exception as e:
-            print(f"Error: {e}")
+    finally:
+        logging.info(f"Deleting {replace_dir}")
+        shutil.rmtree(replace_dir)
+        logging.info(f"Successfully deleted {replace_dir}")
 
-     
-
+        
 
 def main():
     file_path = f"/var/www/html/"
     project_dir = os.path.join(file_path, app_id)
 
     unzip_file(f"{file_path}server.zip", project_dir)
-    replace_and_copy_files(project_dir, app_id)
+    replace_dir = os.path.join(project_dir, 'replacefiles')
+    replace_and_copy_files(replace_dir, app_id)
     
 
 # main
