@@ -36,32 +36,31 @@ def unzip_file(zip_path, extract_to):
 
 def copy_files(filepath):
     try:
-        # if filepath has env
-        if 'env' in filepath:
-            shutil.copyfile(filepath, f"/var/www/html/{app_id}/.env")
-
+        logging.info(f"Copying {filepath} to /var/www/html/{app_id}")
+        shutil.copy(filepath, f"/var/www/html/{app_id}")
+        logging.info(f"Successfully copied {filepath} to /var/www/html/{app_id}")
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
-
-        
-        
 
 def replace_and_copy_files(replace_dir, app_id):
     try:
         logging.info(f"Replacing files in {replace_dir}")
 
-        # Replace the files in the project directory
         for root, dirs, files in os.walk(replace_dir):
             for file in files:
                 file_path = os.path.join(root, file)
-                # replace @@app_id with app_id
-                with open(file_path, 'r') as f:
-                    file_content = f.read()
-                file_content = file_content.replace('@@app_id', app_id)
-                with open(file_path, 'w') as f:
-                    f.write(file_content)
-                
-                copy_files(file_path, app_id)
+
+                if os.path.isfile(file_path):
+                    # replace all @app_id and @app_name with app_id 
+                    with open(file_path, 'r') as f:
+                        content = f.read()
+                        content = content.replace('@app_id', app_id)
+                        content = content.replace('@app_name', app_id)
+
+                    with open(file_path, 'w') as f:
+                        f.write(content)
+
+                    copy_files(file_path)
 
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
