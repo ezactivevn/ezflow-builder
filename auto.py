@@ -11,9 +11,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 def unzip_file(zip_path, extract_to):
     try:
-        # Ensure the target directory exists
-        if not os.path.exists(extract_to):
-            os.makedirs(extract_to)
         
         # Unzipping requires sudo
         command = f"echo {sudo_password} | sudo -S unzip -o {zip_path} -d {extract_to}"
