@@ -54,8 +54,8 @@ def replace_and_copy_files(replace_dir, app_id):
                     # replace all @app_id and @app_name with app_id 
                     with open(file_path, 'r') as f:
                         content = f.read()
-                        content = content.replace('@app_id', app_id)
-                        content = content.replace('@app_name', app_id)
+                        content = content.replace('@@app_id', app_id)
+                        content = content.replace('@@app_name', app_id)
 
                     with open(file_path, 'w') as f:
                         f.write(content)
