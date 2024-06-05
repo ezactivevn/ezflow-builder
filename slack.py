@@ -25,7 +25,7 @@ def send_slack_message(token, channel, message):
         print("Failed to send message. Error:", response.text)
 
 # Set your Slack API token
-slack_token = "xoxb-6519771859383-7087657215015-iWDfftKGa81LAgIzlPBGV9WA"
+slack_token = "xoxb-4295555892247-7210217828135-jsHe9qsykoAn3jg1EvhaY3sx"
 # Set the channel where you want to send the message (e.g., "#general")
 slack_channel = "#ezflow"
 # Set the message you want to send
