@@ -70,6 +70,10 @@ jobs:
             ${{ runner.os }}-firebase-tools-
         if: steps.cache_firebase_tools.outputs.cache-hit != 'true'
 
+      
+      - name: Install Firebase tools
+        run: |
+          npm install -g firebase-tools
 
       - name: Install dependencies
         run: |
