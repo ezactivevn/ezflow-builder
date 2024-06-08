@@ -65,11 +65,6 @@ def replace_and_copy_files(replace_dir, app_id):
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
 
-    finally:
-        logging.info(f"Deleting {replace_dir}")
-        shutil.rmtree(replace_dir)
-        logging.info(f"Successfully deleted {replace_dir}")
-
         
 
 def main():
