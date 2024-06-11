@@ -28,8 +28,8 @@ jobs:
       - name: Zip folder server
         run: zip -r server.zip server
 
-      - name: Copy file
-        run: mv server.zip /var/www/html/
+      - name: Move file with sudo and password
+        run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html
         
      
 
