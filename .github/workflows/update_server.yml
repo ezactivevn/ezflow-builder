@@ -1,41 +1,53 @@
 name: Update Server
 
 on:
-    workflow_dispatch:
-        inputs:
-            branch:
-                description: 'Branch'
-                required: true
-                default: 'develop'
-            repository_url:
-                description: 'Repository URL'
-                required: true
-                default: 'ezactivevn/ezleague-core'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch'
+        required: true
+        default: 'develop'
+      repository_url:
+        description: 'Repository URL'
+        required: true
+        default: 'ezactivevn/ezleague-core'
+      version:
+        description: 'Version'
+        required: true
+        default: '1.0.0'
 
 jobs:
   dispatch:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.branch }}
-          repository: ${{ github.event.inputs.repository_url }}
-          token: ${{ secrets.PAT_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch }}
+        repository: ${{ github.event.inputs.repository_url }}
+        token: ${{ secrets.PAT_TOKEN }}
+    
+    - name: Cache dependencies
+      id: cache_python
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+      if: steps.cache_python.outputs.cache-hit != 'true'
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Use your requirements file name
 
+    - name: Zip folder server
+      run: zip -r server.zip server
 
-      - name: Zip folder server
-        run: zip -r server.zip server
+    - name: Move file with sudo and password
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html
 
-      - name: Move file with sudo and password
-        run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html
-        
-     
-
-
-      
-
-        
-
-      
+    - name: Run update_version.py
+      run: python update_version.py ${{ github.event.inputs.version }}
