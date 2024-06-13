@@ -47,7 +47,14 @@ jobs:
       run: zip -r server.zip server
 
     - name: Move file with sudo and password
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/
+      
+    - name: Checkout current workflow
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        token: ${{ secrets.PAT_TOKEN }}
+     
 
     - name: Run update_version.py
       run: python update_version.py ${{ github.event.inputs.version }}
