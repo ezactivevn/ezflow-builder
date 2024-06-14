@@ -85,11 +85,11 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          git branch feature/ezleague_${{ github.event.inputs.app_id }}
-          git checkout feature/ezleague_${{ github.event.inputs.app_id }}
+          git branch ezleague/${{ github.event.inputs.app_id }}
+          git checkout ezleague/${{ github.event.inputs.app_id }}
           git add -A
-          git commit -m "feature/ezleague_${{ github.event.inputs.app_id }}"
-          git push -u origin feature/ezleague_${{ github.event.inputs.app_id }} --force
+          git commit -m "ezleague/${{ github.event.inputs.app_id }}"
+          git push -u origin ezleague/${{ github.event.inputs.app_id }} --force
 
   notify-on-success:
     runs-on: ubuntu-latest
