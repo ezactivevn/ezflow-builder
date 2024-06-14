@@ -83,6 +83,14 @@ jobs:
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
+      - name: Push to GitHub
+        run: |
+          git branch feature/ezleague_${{ github.event.inputs.app_id }}
+          git checkout feature/ezleague_${{ github.event.inputs.app_id }}
+          git add -A
+          git commit -m "feature/ezleague_${{ github.event.inputs.app_id }}"
+          git push -u origin feature/ezleague_${{ github.event.inputs.app_id }}
+
   notify-on-success:
     runs-on: ubuntu-latest
     needs: build
