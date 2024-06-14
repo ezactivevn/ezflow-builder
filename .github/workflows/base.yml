@@ -85,23 +85,11 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          BRANCH_NAME=feature/ezleague_${{ github.event.inputs.app_id }}
-          
-          # Check if branch exists
-          if git show-ref --verify --quiet refs/heads/$BRANCH_NAME; then
-            echo "Branch $BRANCH_NAME already exists."
-            git checkout $BRANCH_NAME
-            git pull origin $BRANCH_NAME
-          else
-            echo "Branch $BRANCH_NAME does not exist. Creating new branch."
-            git checkout -b $BRANCH_NAME
-          fi
-          
-          # Add, commit, and push changes
+          git branch feature/ezleague_${{ github.event.inputs.app_id }}
+          git checkout feature/ezleague_${{ github.event.inputs.app_id }}
           git add -A
           git commit -m "feature/ezleague_${{ github.event.inputs.app_id }}"
-          git push -u origin $BRANCH_NAME
-      
+          git push -u origin feature/ezleague_${{ github.event.inputs.app_id }} --force
 
   notify-on-success:
     runs-on: ubuntu-latest
