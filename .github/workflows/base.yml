@@ -83,6 +83,12 @@ jobs:
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
 
+      - name: Generate images resources
+        run: |
+          cd client
+          npx @capacitor/assets generate --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111'
+          npx @capacitor/assets generate
+
       - name: Push to GitHub
         run: |
           git branch ezleague/${{ github.event.inputs.app_id }}
