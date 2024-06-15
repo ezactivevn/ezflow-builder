@@ -47,7 +47,7 @@ jobs:
       run: zip -r server.zip server
 
     - name: Move file with sudo and password
-      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html/
       
     - name: Checkout current workflow
       uses: actions/checkout@v3
