@@ -65,15 +65,18 @@ def replace_and_copy_files(replace_dir, app_id):
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
 
-        
+  
 
 def main():
     file_path = f"/var/www/html/"
     project_dir = os.path.join(file_path, app_id)
 
     unzip_file(f"{file_path}server.zip", project_dir)
-    replace_dir = os.path.join(project_dir, 'replacefiles')
+    replace_dir = os.path.join(project_dir, '')
     replace_and_copy_files(replace_dir, app_id)
+    # move env.txt to .env
+    shutil.move(f"{project_dir}/env.txt", f"{project_dir}/.env")
+
     
 
 # main
