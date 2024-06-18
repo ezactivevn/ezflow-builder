@@ -48,8 +48,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # Use your requirements file name
 
+    
+
     - name: Zip folder server
       run: zip -r server.zip server
+
+    - name: Remove server.zip
+      run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/server.zip
 
     - name: Move file with sudo and password
       run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S mv server.zip /var/www/html/
