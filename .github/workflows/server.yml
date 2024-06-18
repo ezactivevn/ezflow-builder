@@ -54,6 +54,10 @@ jobs:
         env: 
           APP_ID: ${{ github.event.inputs.app_id }}
           GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
+      
+      - name: Update Environment file
+        run: |
+          cd /var/www/html/${{ github.event.inputs.app_id }} && sudo -S mv replacefiles/env.txt .env
 
       - name: Set up environment variables
         run: |
