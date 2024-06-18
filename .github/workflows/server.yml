@@ -24,11 +24,24 @@ jobs:
       EMAIL: ${{ vars.EMAIL }}
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: main 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
 
+      - name: Cache dependencies
+        id: cache_python
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+        if: steps.cache_python.outputs.cache-hit != 'true'
           
       - name: Install dependencies
         run: |
