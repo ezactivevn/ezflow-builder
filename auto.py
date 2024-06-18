@@ -72,7 +72,7 @@ def main():
     project_dir = os.path.join(file_path, app_id)
 
     unzip_file(f"{file_path}server.zip", project_dir)
-    replace_dir = os.path.join(project_dir, '')
+    replace_dir = os.path.join(project_dir, 'replacefiles')
     replace_and_copy_files(replace_dir, app_id)
     # move replacefiles/env.txt to .env
     env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env.txt')
