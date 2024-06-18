@@ -75,8 +75,10 @@ def main():
     replace_dir = os.path.join(project_dir, '')
     replace_and_copy_files(replace_dir, app_id)
     # move replacefiles/env.txt to .env
-    env_dir_txt = os.path.join(project_dir, 'replacefiles') + '/env.txt'
+    env_dir_txt = os.path.join(project_dir, '/replacefiles') + '/env.txt'
+    print("env_dir_txt", env_dir_txt)
     env_dir = os.path.join(project_dir, '.env')
+    print("env_dir", env_dir)
     shutil.move(env_dir_txt, env_dir)
 
     
