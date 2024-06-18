@@ -74,17 +74,7 @@ def main():
     unzip_file(f"{file_path}server.zip", project_dir)
     replace_dir = os.path.join(project_dir, 'replacefiles')
     replace_and_copy_files(replace_dir, app_id)
-    # move replacefiles/env.txt to .env
-    env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env.txt')
-    # Normalize path to ensure forward slashes
-    env_dir_txt = os.path.normpath(env_dir_txt).replace(os.sep, '/')
-    print("env_dir_txt", env_dir_txt)
-    env_dir = os.path.join(project_dir, '.env')
-    print("env_dir", env_dir)
-    shutil.move(env_dir_txt, env_dir)
-
     
-
 # main
 if __name__ == "__main__":
     main()
