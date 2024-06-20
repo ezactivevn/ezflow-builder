@@ -17,7 +17,7 @@ def unzip_file(zip_path, extract_to):
             os.makedirs(extract_to)
 
         # Unzip the file while preserving directory structure
-        command = f"unzip {zip_path} -o {extract_to}"
+        command = f"unzip {zip_path} -d {extract_to}"
         result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
         
         # Move files from the server directory to the extract_to directory
