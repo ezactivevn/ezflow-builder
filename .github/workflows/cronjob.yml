@@ -27,7 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  
 
+    - name: Create firebase_auth.json from secret
+      run: |
+            echo "$FIREBASE_AUTH_JSON" > firebase_auth.json
+      env:
+            FIREBASE_AUTH_JSON: ${{ secrets.FIREBASE_AUTH_JSON }}
+
 
     - name: Delete firebase hostings
       run: python firebase.py
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: firebase_auth.json
 
