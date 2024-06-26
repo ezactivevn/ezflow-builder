@@ -31,8 +31,31 @@ def delete_db(app_id):
     connection.close()
 
     print("Database deleted")
+    
 
 delete_db(app_id)
+
+
+def delete_mysql_user(app_id):
+    """Delete database"""
+    connection = mysql.connector.connect(
+        host='35.241.69.119',
+        user='ezactive.phu',
+        password='wuA7Ms^F%1at',
+        auth_plugin='mysql_native_password',
+    )
+
+    cursor = connection.cursor()
+
+    # delete user
+    cursor.execute("DROP USER 'ezactive.ezleague_"+app_id+"'@'%'")
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    print("Database deleted")
+
+delete_mysql_user(app_id)
 
 
 def delete_project(app_id, gcloud_password):
