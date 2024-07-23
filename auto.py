@@ -84,6 +84,11 @@ def main():
     print("env_dir", env_dir)
     shutil.move(env_dir_txt, env_dir)
 
+    # move replacefiles/laravel-worker.conf to supervisor/laravel-worker.conf
+    supervisor_dir_txt = os.path.join(project_dir, 'replacefiles', 'laravel-worker.conf')
+    dest_dir = f"/etc/supervisor/conf.d/laravel-worker-{app_id}.conf"
+    shutil.move(supervisor_dir_txt, dest_dir)
+
     
 
 # main
