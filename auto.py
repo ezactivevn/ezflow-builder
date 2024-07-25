@@ -88,8 +88,7 @@ def main():
     supervisor_dir_txt = os.path.join(project_dir, 'replacefiles', 'laravel-worker.conf')
     dest_dir = f"/etc/supervisor/conf.d/laravel-worker-{app_id}.conf"
     # move with sudo and password
-    command = f"sudo -S mv {supervisor_dir_txt} {dest_dir}"
-    subprocess.run(command, shell=True, input=sudo_password, capture_output=True)
+    subprocess.run(['sudo', '-S', 'mv', supervisor_dir_txt, dest_dir], input=sudo_password.encode())
 
     
 
