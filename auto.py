@@ -87,7 +87,9 @@ def main():
     # move replacefiles/laravel-worker.conf to supervisor/laravel-worker.conf
     supervisor_dir_txt = os.path.join(project_dir, 'replacefiles', 'laravel-worker.conf')
     dest_dir = f"/etc/supervisor/conf.d/laravel-worker-{app_id}.conf"
-    shutil.move(supervisor_dir_txt, dest_dir)
+    # move with sudo and password
+    command = f"sudo -S mv {supervisor_dir_txt} {dest_dir}"
+    subprocess.run(command, shell=True, input=sudo_password, capture_output=True)
 
     
 
