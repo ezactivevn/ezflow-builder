@@ -88,6 +88,9 @@ jobs:
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
+      - name: Run settings.py
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python settings.py
+
       - name: Run Python script for Laravel setup
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python setup_server.py
         env:
