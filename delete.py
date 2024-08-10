@@ -16,7 +16,7 @@ def delete_db(app_id):
     """Delete database"""
     connection = mysql.connector.connect(
         host='35.241.69.119',
-        user='ezactive.phu',
+        user='ezactivevn.phu',
         password='wuA7Ms^F%1at',
         auth_plugin='mysql_native_password',
         database = 'ezactive_ezflow'
@@ -40,7 +40,7 @@ def delete_mysql_user(app_id):
     """Delete database"""
     connection = mysql.connector.connect(
         host='35.241.69.119',
-        user='ezactive.phu',
+        user='ezactivevn.phu',
         password='wuA7Ms^F%1at',
         auth_plugin='mysql_native_password',
     )
