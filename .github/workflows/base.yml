@@ -7,6 +7,10 @@ on:
         description: "Application ID"
         required: true
         default: "unknown"
+      test_data:
+        description: "Test data"
+        required: true
+        default: "true"
 
 jobs:
   build:
