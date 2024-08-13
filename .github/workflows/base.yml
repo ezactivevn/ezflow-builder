@@ -10,7 +10,7 @@ on:
       test_data:
         description: "Test data"
         required: true
-        default: "true"
+        default: "0"
 
 jobs:
   build:
