@@ -88,6 +88,8 @@ jobs:
 
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ inputs.email }}
+        env: 
+          TEST_DATA: ${{github.event.inputs.test_data}}
 
       - name: Generate images resources
         run: |

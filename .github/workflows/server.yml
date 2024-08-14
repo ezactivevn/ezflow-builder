@@ -6,7 +6,9 @@ on:
         description: 'Application ID'
         required: true
         default: 'unknown'
-
+      test_data:
+        description: 'Test data'
+        required: true
 jobs:
   build:
     runs-on: self-hosted
@@ -61,6 +63,7 @@ jobs:
         env: 
           APP_ID: ${{ github.event.inputs.app_id }}
           GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
+          TEST_DATA: ${{ github.event.inputs.test_data }}
       
 
       - name: Set up environment variables
