@@ -57,6 +57,13 @@ def delete_mysql_user(app_id):
 
 delete_mysql_user(app_id)
 
+def rm_supervisor_config(app_id):
+    """Remove supervisor config"""
+    # Remove supervisor config
+    subprocess.run(["sudo", "-S", "rm", "-rf", f"/etc/supervisor/conf.d/laravel-worker-{app_id}.conf"], input=gcloud_password.encode())
+
+
+rm_supervisor_config(app_id)
 
 def delete_project(app_id, gcloud_password):
     """Delete project"""
