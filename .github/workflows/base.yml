@@ -11,7 +11,9 @@ on:
         description: "Test data"
         required: true
         default: "0"
-
+      email:
+        description: "Customer Email"
+        required: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -85,7 +87,7 @@ jobs:
           pip install -r requirements.txt  # Use your requirements file name
 
       - name: Run Python script
-        run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ vars.EMAIL }}
+        run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ inputs.email }}
 
       - name: Generate images resources
         run: |
