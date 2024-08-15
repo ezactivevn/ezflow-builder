@@ -81,7 +81,7 @@ def main():
 
     print("test_data", test_data)
 
-    if(test_data == "0"):
+    if(test_data == "1"):
         env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env.txt')
     
     # Normalize path to ensure forward slashes
