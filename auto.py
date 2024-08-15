@@ -77,10 +77,12 @@ def main():
     replace_and_copy_files(replace_dir, app_id)
     # move replacefiles/env.txt to .env
     test_data = os.getenv("TEST_DATA")
-    env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env.txt')
+    env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env-test.txt')
 
-    if(test_data == "1"):
-        env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env-test.txt')
+    print("test_data", test_data)
+
+    if(test_data == "0"):
+        env_dir_txt = os.path.join(project_dir, 'replacefiles', 'env.txt')
     
     # Normalize path to ensure forward slashes
     env_dir_txt = os.path.normpath(env_dir_txt).replace(os.sep, '/')
