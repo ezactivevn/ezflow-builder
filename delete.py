@@ -35,6 +35,28 @@ def delete_db(app_id):
 
 delete_db(app_id)
 
+def delete_mysql_db(app_id):
+    """Delete database"""
+    connection = mysql.connector.connect(
+        host='35.241.69.119',
+        user='ezactivevn.phu',
+        password='wuA7Ms^F%1at',
+        auth_plugin='mysql_native_password',
+    )
+
+    cursor = connection.cursor()
+
+    # delete database
+    cursor.execute("DROP DATABASE 'ezleague_"+app_id+"'")
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    print("Database deleted")
+
+
+delete_mysql_db(app_id)
+
 
 def delete_mysql_user(app_id):
     """Delete database"""
@@ -48,7 +70,7 @@ def delete_mysql_user(app_id):
     cursor = connection.cursor()
 
     # delete user
-    cursor.execute("DROP USER 'ezactive.ezleague_"+app_id+"'@'%'")
+    cursor.execute("DROP USER 'ezleague."+app_id+"'@'%'")
     connection.commit()
     cursor.close()
     connection.close()
