@@ -47,7 +47,7 @@ def delete_mysql_db(app_id):
     cursor = connection.cursor()
 
     # delete database
-    cursor.execute("DROP DATABASE 'ezleague_"+app_id+"'")
+    cursor.execute(f"DROP DATABASE IF EXISTS ezleague_{app_id}")
     connection.commit()
     cursor.close()
     connection.close()
