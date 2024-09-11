@@ -70,7 +70,7 @@ def delete_mysql_user(app_id):
     cursor = connection.cursor()
 
     # delete user
-    cursor.execute("DROP USER 'ezleague."+app_id+"'@'%'")
+    cursor.execute("DROP USER IF EXISTS 'ezleague."+app_id+"'@'%'")
     connection.commit()
     cursor.close()
     connection.close()
@@ -83,7 +83,8 @@ def rm_supervisor_config(app_id):
     """Remove supervisor config"""
     # Remove supervisor config
     subprocess.run(["sudo", "-S", "rm", "-rf", f"/etc/supervisor/conf.d/laravel-worker-{app_id}.conf"], input=gcloud_password.encode())
-
+    # restart supervisor
+    subprocess.run(["sudo", "-S", "systemctl", "restart", "supervisor"], input=gcloud_password.encode())
 
 rm_supervisor_config(app_id)
 
