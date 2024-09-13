@@ -14,6 +14,10 @@ on:
       email:
         description: "Customer Email"
         required: true
+      timer_duration:
+        description: "Timer Duration in seconds"
+        required: false
+        default: "300"
 
 jobs:
   trackTime:
@@ -25,24 +29,24 @@ jobs:
         id: get-start-time
         run: echo "::set-output name=start-time::$(date +%s)"
 
-  checkVolume:
+  check-disk-space:
     needs: [trackTime]
     runs-on: self-hosted
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: main 
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.x
 
-      - name: Cache dependencies
+      - name: Cache Python dependencies
         id: cache_python
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -50,31 +54,33 @@ jobs:
             ${{ runner.os }}-pip-
         if: steps.cache_python.outputs.cache-hit != 'true'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Use your requirements file name
-
+          pip install -r requirements.txt
 
       - name: Check before build
         run: python check.py
-      
+
       - name: Handle disk check
         if: failure()
         run: echo "Disk is full and cannot build"
 
   build:
-    needs: [checkVolume]
+    needs: [check-disk-space]
     runs-on: ubuntu-latest
-    
+
+    env:
+      TIMER_DURATION: ${{ github.event.inputs.timer_duration }}
+
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.x
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: main
           repository: ezactivevn/ezleague-core
@@ -82,22 +88,22 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config --global user.name Phu Hoang
-          git config --global user.email ${{ vars.EMAIL }}
+          git config --global user.name "Phu Hoang"
+          git config --global user.email ${{ github.event.inputs.email }}
 
       - name: Authenticate with GitHub
         env:
           TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: echo "machine github.com login ${{ vars.USERNAME }} password $TOKEN" > ~/.netrc
+        run: echo "machine github.com login ${{ github.actor }} password $TOKEN" > ~/.netrc
 
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: "18.x"
 
-      - name: Cache dependencies
+      - name: Cache Python dependencies
         id: cache_python
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -105,9 +111,9 @@ jobs:
             ${{ runner.os }}-pip-
         if: steps.cache_python.outputs.cache-hit != 'true'
 
-      - name: Cache node modules
+      - name: Cache Node.js modules
         id: cache_node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: client/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json') }}
@@ -116,20 +122,18 @@ jobs:
         if: steps.cache_node_modules.outputs.cache-hit != 'true'
 
       - name: Install Firebase tools
-        run: |
-          npm install -g firebase-tools
+        run: npm install -g firebase-tools
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Use your requirements file name
+          pip install -r requirements.txt
 
-      - name: Run Python script
-        run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ vars.USERNAME }} ${{ inputs.email }}
-        env: 
-          TEST_DATA: ${{ github.event.inputs.test_data }}
+      - name: Run Pusher timer script in background
+        run: |
+          nohup python pusher_timer.py > pusher_timer.log 2>&1 &
 
-      - name: Generate images resources
+      - name: Generate image resources
         run: |
           cd client
           npx @capacitor/assets generate --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111'
@@ -137,58 +141,36 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          git branch ezleague/${{ github.event.inputs.app_id }}
-          git checkout ezleague/${{ github.event.inputs.app_id }}
+          git checkout -b ezleague/${{ github.event.inputs.app_id }}
           git add -A
           git commit -m "ezleague/${{ github.event.inputs.app_id }}"
           git push -u origin ezleague/${{ github.event.inputs.app_id }} --force
 
-
-  notify-on-success:
+  notify:
     runs-on: ubuntu-latest
     needs: build
-    if: success()
 
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.x
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Use your requirements file name
+          pip install -r requirements.txt
           pip install pusher
 
-      - name: Run slack.py
+      - name: Notify via Slack (Success)
+        if: success()
         run: python slack.py ${{ github.event.inputs.app_id }} 1 client
 
-  notify-on-failure:
-    runs-on: ubuntu-latest
-    needs: build
-    if: failure()
-
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
+      - name: Notify via Email and Slack (Failure)
+        if: failure()
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Use your requirements file name
-          pip install pusher
-          
-      - name: Run sendmail.py
-        run: python sendmail.py ${{ github.event.inputs.app_id }} 3
-      
-      - name: Run slack.py
-        run: python slack.py ${{ github.event.inputs.app_id }} 0 client
+          python sendmail.py ${{ github.event.inputs.app_id }} 3
+          python slack.py ${{ github.event.inputs.app_id }} 0 client
