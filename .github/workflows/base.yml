@@ -187,7 +187,7 @@ jobs:
           pip install pusher
           
       - name: Run sendmail.py
-        run: python sendmail.py ${{ github.event.inputs.app_id }} 0
+        run: python sendmail.py ${{ github.event.inputs.app_id }} 3
       
       - name: Run slack.py
         run: python slack.py ${{ github.event.inputs.app_id }} 0 client
