@@ -55,9 +55,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Use your requirements file name
 
-      - name: Send 20% Progress to Pusher
-        run: |
-          python pusher.py --percent 20 --title "Checking volume" --id "helloworld"
 
       - name: Check before build
         run: python check.py
