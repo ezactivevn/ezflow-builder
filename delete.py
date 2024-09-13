@@ -4,7 +4,6 @@ from mysql.connector import Error
 import sys
 import subprocess
 import os
-import pusher
 
 
 app_id = sys.argv[1]
@@ -149,14 +148,3 @@ send_email_to_client( email, "Project Deleted", f"Project {app_id} deleted succe
 send_email_to_client( customer_email, "Project Deleted", f"Project {app_id} deleted successfully.")
 
 
-pusher_client = pusher.Pusher(
-        app_id='1764419',
-        key='b82e6e4504e08d436c41',
-        secret='d923f53e1b98e0e15948',
-        cluster='ap1',
-        ssl=True
-        )
-
-pusher_client.trigger('manage-customer', 'finish-delete', {
-    'message': f"Project {app_id} deleted successfully. Requested by {requester_email}.",
-    })
