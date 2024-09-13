@@ -14,6 +14,9 @@ pusher_client = pusher.Pusher(
 # Get duration from environment variable, default to 300 seconds (5 minutes)
 duration = int(os.getenv('TIMER_DURATION', 300))
 
+# Get app_id from environment variable
+app_id = os.getenv('APP_ID', 'default_app_id')
+    
 start_time = time.time()
 
 while (time.time() - start_time) < duration:
@@ -21,6 +24,6 @@ while (time.time() - start_time) < duration:
         {
         'message': 'Finish loading',
         'title': "Build App...",
-        'id': "helloworld",
+        'id': app_id
      })
     time.sleep(3)
