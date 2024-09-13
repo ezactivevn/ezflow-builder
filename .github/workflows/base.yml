@@ -129,10 +129,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pusher timer script in background
-        run: |
-          nohup python pusher_timer.py > pusher_timer.log 2>&1 &
-
       - name: Run Python script
         run: python runscript.py ${{ github.event.inputs.app_id }} ${{ secrets.PAT_TOKEN }} ${{ secrets.FIREBASE_TOKEN }} ${{ github.actor }} ${{ github.event.inputs.email }}
         env: 
