@@ -54,11 +54,6 @@ jobs:
             ${{ runner.os }}-pip-
         if: steps.cache_python.outputs.cache-hit != 'true'
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
       - name: Check before build
         run: python check.py
 
