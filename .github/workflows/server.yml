@@ -9,6 +9,9 @@ on:
       test_data:
         description: 'Test data'
         required: true
+      app_password:
+        description: 'User Login Password'
+        required: true
 jobs:
   build:
     runs-on: self-hosted
@@ -93,7 +96,11 @@ jobs:
 
       - name: Run settings.py
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python settings.py ${{ github.event.inputs.app_id }}
-
+        env:
+            APP_ID: ${{ github.event.inputs.app_id }}
+            GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
+            TEST_DATA: ${{ github.event.inputs.test_data }}
+            
       - name: Run Python script for Laravel setup
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python setup_server.py
         env:
@@ -105,6 +112,8 @@ jobs:
 
       - name: run python updateDB.py in /var/www/html/
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python updateDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+        env:
+            APP_PASSWORD: ${{ github.event.inputs.app_password }}
   notify-on-failure:
     runs-on: ubuntu-latest
     needs: build
