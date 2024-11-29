@@ -6,7 +6,7 @@ on:
       branch:
         description: 'Branch'
         required: true
-        default: 'main'
+        default: 'deploy'
       repository_url:
         description: 'Repository URL'
         required: true
