@@ -6,6 +6,9 @@ on:
         description: 'Application ID'
         required: true
         default: 'unknown'
+      site_id:
+        description: 'Site ID'
+        required: true
       test_data:
         description: 'Test data'
         required: true
@@ -67,6 +70,7 @@ jobs:
           APP_ID: ${{ github.event.inputs.app_id }}
           GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
           TEST_DATA: ${{ github.event.inputs.test_data }}
+          SITE_ID: ${{ github.event.inputs.site_id }}
       
 
       - name: Set up environment variables

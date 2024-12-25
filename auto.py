@@ -6,6 +6,9 @@ import subprocess
 
 app_id = os.environ.get('APP_ID')
 sudo_password = os.environ.get('GCLOUD_PASSWORD')
+site_id = os.environ.get('SITE_ID')
+site_id_url = f"https://{site_id}.web.app"
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -56,6 +59,7 @@ def replace_and_copy_files(replace_dir, app_id):
                         content = f.read()
                         content = content.replace('@@app_id', app_id)
                         content = content.replace('@@app_name', app_id)
+                        content = content.replace('@@site_id', site_id_url)
 
                     with open(file_path, 'w') as f:
                         f.write(content)
