@@ -38,9 +38,9 @@ delete_db(app_id)
 def delete_mysql_db(app_id):
     """Delete database"""
     connection = mysql.connector.connect(
-        host='35.241.69.119',
-        user='ezactivevn.phu',
-        password='wuA7Ms^F%1at',
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
         auth_plugin='mysql_native_password',
     )
 
@@ -61,9 +61,9 @@ delete_mysql_db(app_id)
 def delete_mysql_user(app_id):
     """Delete database"""
     connection = mysql.connector.connect(
-        host='35.241.69.119',
-        user='ezactivevn.phu',
-        password='wuA7Ms^F%1at',
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
         auth_plugin='mysql_native_password',
     )
 

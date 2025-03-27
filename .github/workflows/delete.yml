@@ -42,4 +42,11 @@ jobs:
 
     - name: Delete Project
       run: python delete.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }} ${{ github.event.inputs.email }} ${{ github.event.inputs.requester }}
+      env:
+          APP_ID: ${{ github.event.inputs.app_id }}
+          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          
 
