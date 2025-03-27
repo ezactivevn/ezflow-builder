@@ -25,7 +25,6 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS: client_secret.json
       GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
       DB_HOST: ${{ secrets.DB_HOST }}
-      DB_NAME: ${{ secrets.DB_NAME }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       USERNAME: ${{ vars.USERNAME }}
@@ -75,7 +74,7 @@ jobs:
       
     
       # - name: Copy folder server to /var/www/html/
-      #   run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_id }}
+      #  run: echo ${{ secrets.GCLOUD_PASSWORD }} |  sudo -S cp -r server /var/www/html/${{ github.event.inputs.app_id }}
       
       - name: List file
         run: ls -l
@@ -84,7 +83,6 @@ jobs:
         run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
         env:
             DB_HOST: ${{ secrets.DB_HOST }}
-            DB_NAME: ${{ secrets.DB_NAME }}
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
@@ -100,7 +98,6 @@ jobs:
         env:
             APP_ID: ${{ github.event.inputs.app_id }}
             DB_HOST: ${{ secrets.DB_HOST }}
-            DB_NAME: ${{ secrets.DB_NAME }}
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
