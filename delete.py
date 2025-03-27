@@ -15,9 +15,9 @@ requester_email = sys.argv[4]
 def delete_db(app_id):
     """Delete database"""
     connection = mysql.connector.connect(
-        host='35.241.69.119',
-        user='ezactivevn.phu',
-        password='wuA7Ms^F%1at',
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
         auth_plugin='mysql_native_password',
         database = 'ezactive_ezflow'
     )
