@@ -79,15 +79,15 @@ jobs:
       - name: List file
         run: ls -l
 
-      - name: sudo -S run python create_db.py in /var/www/html/
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+      - name: run python create_db.py in /var/www/html/
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && sudo -S python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
         env:
             DB_HOST: ${{ secrets.DB_HOST }}
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Run settings.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python settings.py ${{ github.event.inputs.app_id }}
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && sudo -S python settings.py ${{ github.event.inputs.app_id }}
         env:
             APP_ID: ${{ github.event.inputs.app_id }}
             GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
