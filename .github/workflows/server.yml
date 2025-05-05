@@ -80,7 +80,7 @@ jobs:
         run: ls -l
 
       - name: run python create_db.py in /var/www/html/
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && sudo -S python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
         env:
             DB_HOST: ${{ secrets.DB_HOST }}
             DB_USER: ${{ secrets.DB_USER }}
