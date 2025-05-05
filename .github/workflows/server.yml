@@ -87,7 +87,7 @@ jobs:
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Run settings.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && sudo -S python settings.py ${{ github.event.inputs.app_id }}
+        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python settings.py ${{ github.event.inputs.app_id }}
         env:
             APP_ID: ${{ github.event.inputs.app_id }}
             GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
