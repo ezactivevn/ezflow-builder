@@ -115,13 +115,12 @@ jobs:
           cd client
           npx @capacitor/assets generate --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111'
 
-      - name: Deploy Firebase Hosting (via Docker)
+      - name: Firebase Deploy via Docker
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace/client \
-            -e FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }} \
-            node:18-slim bash -c "npm install -g firebase-tools && firebase deploy --only hosting --token \$FIREBASE_TOKEN"
+          docker run --rm -v ${{ github.workspace }}/client:/app -w /app node:18-alpine sh -c "
+            npm install --no-audit --omit=dev && \
+            npx firebase deploy --token '${{ secrets.FIREBASE_TOKEN }}'
+          "
 
       - name: Push to GitHub
         run: |
