@@ -60,7 +60,7 @@ jobs:
           TEST_DATA: ${{ github.event.inputs.test_data }}
           GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
 
-      - name: Debug: List files
+      - name: Debug  List files
         run: ls -al
 
       - name: Run app setup scripts
