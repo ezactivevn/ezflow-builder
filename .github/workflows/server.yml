@@ -67,10 +67,10 @@ jobs:
         run: |
           cd /var/www/html/${{ github.event.inputs.app_id }}
 
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 createDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 settings.py ${{ github.event.inputs.app_id }}
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 setup_server.py
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 updateDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
+          echo "$GCLOUD_PASSWORD" | python3 createDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
+          echo "$GCLOUD_PASSWORD" | python3 settings.py ${{ github.event.inputs.app_id }}
+          echo "$GCLOUD_PASSWORD" | python3 setup_server.py
+          echo "$GCLOUD_PASSWORD" | python3 updateDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
