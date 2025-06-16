@@ -22,13 +22,17 @@ jobs:
     runs-on: self-hosted
 
     env:
-      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      GOOGLE_APPLICATION_CREDENTIALS: client_secret.json
+      APP_ID: ${{ github.event.inputs.app_id }}
+      SITE_ID: ${{ github.event.inputs.site_id }}
+      TEST_DATA: ${{ github.event.inputs.test_data }}
+      APP_PASSWORD: ${{ github.event.inputs.app_password }}
       GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      GOOGLE_APPLICATION_CREDENTIALS: client_secret.json
       USERNAME: ${{ vars.USERNAME }}
       EMAIL: ${{ vars.EMAIL }}
 
@@ -38,48 +42,48 @@ jobs:
         with:
           ref: main
 
-      - name: Install Python dependencies for root user
+      - name: Install Python dependencies globally
         run: |
           echo "$GCLOUD_PASSWORD" | sudo -S pip3 install --upgrade pip
-          echo "$GCLOUD_PASSWORD" | sudo -S pip3 install --upgrade --no-cache-dir -r requirements.txt
+          echo "$GCLOUD_PASSWORD" | sudo -S pip3 install --no-cache-dir -r requirements.txt mysql-connector-python
 
-      - name: Set Git identity
+      - name: Configure Git identity
         run: |
           git config --global user.name "$USERNAME"
           git config --global user.email "$EMAIL"
 
-      - name: Remove existing app folder
+      - name: Remove old app directory
         run: |
-          echo "$GCLOUD_PASSWORD" | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
+          echo "$GCLOUD_PASSWORD" | sudo -S rm -rf /var/www/html/$APP_ID
 
-      - name: Run auto.py to prepare app
+      - name: Run auto.py to prepare app structure
         run: |
           python3 auto.py
-        env:
-          APP_ID: ${{ github.event.inputs.app_id }}
-          SITE_ID: ${{ github.event.inputs.site_id }}
-          TEST_DATA: ${{ github.event.inputs.test_data }}
-          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
 
-      - name: Debug – List deployment folder
+      - name: List deployed app directory
         run: ls -al /var/www/html/
 
-      - name: Run app setup scripts with sudo
+      - name: Run app setup scripts with root permissions
         run: |
-          cd /var/www/html/${{ github.event.inputs.app_id }}
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 createDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 settings.py ${{ github.event.inputs.app_id }}
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 setup_server.py
-          echo "$GCLOUD_PASSWORD" | sudo -S python3 updateDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
-        env:
-          APP_ID: ${{ github.event.inputs.app_id }}
-          TEST_DATA: ${{ github.event.inputs.test_data }}
-          APP_PASSWORD: ${{ github.event.inputs.app_password }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
+          cd /var/www/html/$APP_ID
 
+          echo "$GCLOUD_PASSWORD" | sudo -E -S env \
+            APP_ID=$APP_ID GCLOUD_PASSWORD=$GCLOUD_PASSWORD \
+            DB_HOST=$DB_HOST DB_USER=$DB_USER DB_PASSWORD=$DB_PASSWORD \
+            python3 createDB.py $APP_ID $GCLOUD_PASSWORD
+
+          echo "$GCLOUD_PASSWORD" | sudo -E -S env \
+            APP_ID=$APP_ID GCLOUD_PASSWORD=$GCLOUD_PASSWORD \
+            python3 settings.py $APP_ID
+
+          echo "$GCLOUD_PASSWORD" | sudo -E -S env \
+            APP_ID=$APP_ID GCLOUD_PASSWORD=$GCLOUD_PASSWORD \
+            python3 setup_server.py
+
+          echo "$GCLOUD_PASSWORD" | sudo -E -S env \
+            APP_ID=$APP_ID GCLOUD_PASSWORD=$GCLOUD_PASSWORD \
+            DB_HOST=$DB_HOST DB_USER=$DB_USER DB_PASSWORD=$DB_PASSWORD \
+            python3 updateDB.py $APP_ID $GCLOUD_PASSWORD
 
   notify-on-failure:
     runs-on: ubuntu-latest
@@ -90,11 +94,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: Install dependencies for email notify
+      - name: Install Python libraries for notification
         run: |
           python3 -m pip install --upgrade pip
           pip3 install --no-cache-dir mysql-connector-python pusher
 
-      - name: Notify failure by email
+      - name: Send failure email
         run: |
           python3 sendmail.py ${{ github.event.inputs.app_id }} 3
