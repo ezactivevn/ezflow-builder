@@ -30,13 +30,13 @@ jobs:
         run: echo "start-time=$(date +%s)" >> $GITHUB_OUTPUT
 
   check-disk-space:
-    needs: trackTime
+    needs: [trackTime]
     runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: main 
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -56,7 +56,7 @@ jobs:
         run: echo "Disk is full and cannot build"
 
   build:
-    needs: check-disk-space
+    needs: [check-disk-space]
     runs-on: ubuntu-latest
     env:
       TIMER_DURATION: ${{ github.event.inputs.timer_duration }}
@@ -89,21 +89,32 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Cache dependencies
+      - name: Cache Python dependencies
+        id: cache_python_build
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.cache/pip
-            client/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/requirements.txt', 'client/package*.json') }}
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-
+            ${{ runner.os }}-pip-
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          npm install
+
+      - name: Cache Node.js modules
+        id: cache_node_modules
+        uses: actions/cache@v3
+        with:
+          path: client/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('client/package-lock.json', 'client/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install Node.js dependencies
+        run: npm install
+        # This step can be skipped if cache hit ensures dependencies are installed
 
       - name: Run Python script
         run: python runscript.py "${{ github.event.inputs.app_id }}" "${{ secrets.PAT_TOKEN }}" "${{ secrets.FIREBASE_TOKEN }}" "${{ github.actor }}" "${{ github.event.inputs.email }}"
@@ -114,16 +125,7 @@ jobs:
         run: |
           cd client
           npx @capacitor/assets generate --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111'
-
-      - name: Firebase Deploy via Docker image
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/client:/app \
-            -w /app \
-            -e FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }} \
-            andreysenov/firebase-tools \
-            firebase deploy --only hosting --token "$FIREBASE_TOKEN"
-
+          npx @capacitor/assets generate
 
       - name: Push to GitHub
         run: |
