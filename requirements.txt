@@ -1,4 +1,4 @@
-google-auth
+mysql-connector-python
 requests
-paramiko
-scp
+pusher
+bcrypt
