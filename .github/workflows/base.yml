@@ -112,29 +112,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Cache Firebase tools
-        id: cache_firebase
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/firebase
-          key: ${{ runner.os }}-firebase-tools-${{ hashFiles('client/package-lock.json', 'client/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-firebase-tools-
-
-      - name: Install Firebase tools
-        run: npm install -g firebase-tools
-
-      - name: Cache Node.js and Firebase together (Optional)
-        # If you prefer to cache Node.js modules and Firebase tools together
-        uses: actions/cache@v3
-        with:
-          path: |
-            client/node_modules
-            ~/.cache/firebase
-          key: ${{ runner.os }}-node-firebase-${{ hashFiles('client/package-lock.json', 'client/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-firebase-
-
       - name: Install Node.js dependencies
         run: npm install
         # This step can be skipped if cache hit ensures dependencies are installed
