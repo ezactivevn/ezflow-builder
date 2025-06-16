@@ -36,64 +36,59 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: main 
+          ref: main
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip3 install -r requirements.txt
 
-      - name: Set up Git
+      - name: Set up Git identity
         run: |
-          git config --global user.name $USERNAME
-          git config --global user.email $EMAIL
+          git config --global user.name "$USERNAME"
+          git config --global user.email "$EMAIL"
 
-      - name: Remove existing app folder
-        run: echo ${{ secrets.GCLOUD_PASSWORD }} | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
+      - name: Clean old app folder
+        run: |
+          echo "$GCLOUD_PASSWORD" | sudo -S rm -rf /var/www/html/${{ github.event.inputs.app_id }}
 
       - name: Run auto.py
-        run: python3 auto.py
-        env: 
+        run: |
+          python3 auto.py
+        env:
           APP_ID: ${{ github.event.inputs.app_id }}
-          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
-          TEST_DATA: ${{ github.event.inputs.test_data }}
           SITE_ID: ${{ github.event.inputs.site_id }}
+          TEST_DATA: ${{ github.event.inputs.test_data }}
+          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
 
-      - name: Set up environment variables
+      - name: Export environment variables to GitHub env
         run: |
           echo "PAT_TOKEN=${{ secrets.PAT_TOKEN }}" >> $GITHUB_ENV
           echo "FIREBASE_TOKEN=${{ secrets.FIREBASE_TOKEN }}" >> $GITHUB_ENV
           echo "GOOGLE_APPLICATION_CREDENTIALS=client_secret.json" >> $GITHUB_ENV
 
-      - name: List current directory
-        run: ls -l
+      - name: List files for debug
+        run: ls -al
 
-      - name: Run createDB.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python3 createDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
+      - name: Run all setup scripts with sudo
+        run: |
+          cd /var/www/html/${{ github.event.inputs.app_id }}
+
+          echo "$GCLOUD_PASSWORD" | sudo -S python3 createDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
+
+          echo "$GCLOUD_PASSWORD" | sudo -S python3 settings.py ${{ github.event.inputs.app_id }}
+
+          echo "$GCLOUD_PASSWORD" | sudo -S python3 setup_server.py
+
+          echo "$GCLOUD_PASSWORD" | sudo -S python3 updateDB.py ${{ github.event.inputs.app_id }} $GCLOUD_PASSWORD
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-      - name: Run settings.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python3 settings.py ${{ github.event.inputs.app_id }}
-        env:
           APP_ID: ${{ github.event.inputs.app_id }}
-          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
           TEST_DATA: ${{ github.event.inputs.test_data }}
-
-      - name: Run setup_server.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python3 setup_server.py
-        env:
-          APP_ID: ${{ github.event.inputs.app_id }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-      - name: Run updateDB.py
-        run: cd /var/www/html/${{ github.event.inputs.app_id }} && python3 updateDB.py ${{ github.event.inputs.app_id }} ${{ secrets.GCLOUD_PASSWORD }}
-        env:
           APP_PASSWORD: ${{ github.event.inputs.app_password }}
+          GCLOUD_PASSWORD: ${{ secrets.GCLOUD_PASSWORD }}
 
   notify-on-failure:
     runs-on: ubuntu-latest
@@ -101,7 +96,7 @@ jobs:
     if: failure()
 
     steps:
-      - name: Install dependencies
+      - name: Install minimal Python deps
         run: |
           python3 -m pip install --upgrade pip
           pip3 install requests mysql-connector-python pusher
@@ -109,5 +104,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run sendmail.py
-        run: python3 sendmail.py ${{ github.event.inputs.app_id }} 3
+      - name: Notify failure by email
+        run: |
+          python3 sendmail.py ${{ github.event.inputs.app_id }} 3
