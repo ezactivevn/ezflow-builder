@@ -80,7 +80,7 @@ jobs:
           tools-version: 11.9.0
           gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
-          project_id: ${{ secrets.FIREBASE_PROJECT_ID }}
+          project_id: ezactive-ezleague
           project_path: client
 
 
