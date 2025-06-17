@@ -79,6 +79,8 @@ jobs:
         with:
           tools-version: 11.9.0
           firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+          project_id: ${{ secrets.FIREBASE_PROJECT_ID }}
+
 
       - name: Run Python script
         run: python runscript.py "${{ github.event.inputs.app_id }}" "${{ secrets.PAT_TOKEN }}" "${{ secrets.FIREBASE_TOKEN }}" "${{ github.actor }}" "${{ github.event.inputs.email }}"
