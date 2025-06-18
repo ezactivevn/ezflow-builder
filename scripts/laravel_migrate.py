@@ -58,22 +58,9 @@ class Laravel:
         self.run_command(f"{self.php_path} artisan storage:link")
         print("✅ Storage link created.")
 
-    def setup_permissions(self):
-        """Set correct permissions and ownership for Laravel directories."""
-        paths = [
-            os.path.join(self.project_path, 'storage'),
-            os.path.join(self.project_path, 'bootstrap', 'cache'),
-            os.path.join(self.project_path, 'public'),
-        ]
-
-        try:
-            for path in paths:
-                if os.path.exists(path):
-                    os.chmod(path, 0o775)
-                    subprocess.run(f"chown -R www-data:www-data {path}", shell=True, check=True)
-            print("✅ Permissions and ownership set to www-data:www-data.")
-        except Exception as e:
-            print(f"❌ Failed to set permissions or ownership: {e}")
+    def setup_permissions(self, folder:str):
+        self.run_command(f"sudo chown -R www-data:www-data {folder}")
+        print("✅ Owner changed to www-data")
 
     def full_setup(self, use_passport: bool = False) -> None:
         """Run full Laravel project setup."""
@@ -89,6 +76,8 @@ class Laravel:
 
         self.seed_database()
         self.storage_link()
-        self.setup_permissions()
+        self.setup_permissions(self.project_path +"/public")
+        self.setup_permissions(self.project_path +"/storage")
+
 
         print("✅ Laravel setup completed.")
