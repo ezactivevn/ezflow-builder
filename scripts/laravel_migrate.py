@@ -15,6 +15,10 @@ class Laravel:
 
     def run_command(self, command: str) -> bool:
         """Run shell command inside Laravel project folder."""
+        # Nếu là lệnh artisan và chưa có --force thì thêm vào
+        if "artisan" in command and "--force" not in command:
+            command += " --force"
+
         print(f"▶️ Running: {command}")
         try:
             subprocess.run(command, shell=True, check=True, cwd=self.project_path)
@@ -75,6 +79,5 @@ class Laravel:
         self.seed_database()
 
         print("✅ Laravel setup completed.")
-
 
 
