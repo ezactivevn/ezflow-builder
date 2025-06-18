@@ -14,6 +14,9 @@ def clone_repository():
     )
     clone.clone_repo()
 
+    # checkout app_id branch
+    clone.checkout_branch(APP_ID)
+
 # step 2: Update apache config
 def update_config_to_apache():
     config = ApacheConfigurator()

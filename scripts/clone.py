@@ -28,3 +28,13 @@ class Clone:
             print("Repository cloned successfully.")
         except subprocess.CalledProcessError as e:
             print(f"Error cloning repository: {e}")
+    
+    def checkout_branch(self, app_id: str):
+        """Checkout to the branch ezleague/{APP_ID}."""
+        branch_name = f"ezleague/{app_id}"
+        try:
+            print(f"Checking out branch {branch_name}")
+            subprocess.run(["git", "checkout", branch_name], check=True, cwd=self.target_dir)
+            print(f"✅ Checked out to {branch_name}")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to checkout branch {branch_name}: {e}")
