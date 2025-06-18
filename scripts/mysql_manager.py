@@ -44,7 +44,6 @@ class MySQLManager:
             f"GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, REFERENCES "
             f"ON `{db_name}`.* TO '{user}'@'{host_ip}'"
         )
-        self.execute_query("FLUSH PRIVILEGES")
 
     def delete_database(self, db_name, user, host_ip):
         self.execute_query(f"DROP DATABASE IF EXISTS `{db_name}`")
