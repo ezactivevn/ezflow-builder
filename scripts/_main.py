@@ -34,8 +34,7 @@ def create_db_and_user():
     
     db_host = os.getenv("DB_HOST")
     db_user = os.getenv("DB_USER")
-    db_password = os.getenv("DB_PASSWORD")
-    host_ip = os.getenv("HOST_IP")
+    db_password = os.getenv("DB_PASS")
 
     manager = MySQLManager(root_user=db_user, root_password=db_password, host=db_host)
 
