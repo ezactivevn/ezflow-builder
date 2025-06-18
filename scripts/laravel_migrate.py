@@ -48,12 +48,11 @@ class Laravel:
 
     def full_setup(self, use_passport: bool = False) -> None:
         print("🚀 Starting Laravel setup...")
-
-        # Step 1: Install PHP dependencies via Composer
-        self.install_dependencies()
-
-        # Step 2: Create .env file if missing
+        # Step 1: Create .env file if missing
         self.copy_env_file()
+
+        # Step 2: Install PHP dependencies via Composer
+        self.install_dependencies()
 
         # Step 3: Generate Laravel APP_KEY
         self.generate_app_key()
