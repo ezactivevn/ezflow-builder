@@ -2,6 +2,7 @@ from clone import Clone
 from apache_config import ApacheConfigurator
 from mysql_manager import MySQLManager
 from laravel_migrate import Laravel
+import os
 
 APP_ID = os.getenv("APP_ID")
 
