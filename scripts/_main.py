@@ -44,7 +44,7 @@ def create_db_and_user():
         db_name=f"ezleague_{APP_ID}",
         user=f"ezleague.{APP_ID}",
         host_ip=host_ip,
-        password=f"password"
+        password="password"
     )
 
 # step 4: Migrate and Seed
