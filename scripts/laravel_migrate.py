@@ -9,6 +9,10 @@ class Laravel:
         self.env_example_file = os.path.join(project_path, 'env.txt')
         self.php_path = "php"  # adjust if using PHP 8.x or custom path
 
+    def install_dependencies(self):
+        """Install Laravel PHP dependencies via Composer."""
+        self.run_command("composer install --ignore-platform-reqs")
+
     def run_command(self, command: str):
         """Run shell command inside Laravel project folder."""
         print(f"▶️ Running: {command}")
@@ -42,12 +46,25 @@ class Laravel:
         print("✅ Passport installed.")
 
 
-    def full_setup(self, use_passport=False):
+    def full_setup(self, use_passport: bool = False) -> None:
         print("🚀 Starting Laravel setup...")
+
+        # Step 1: Install PHP dependencies via Composer
+        self.install_dependencies()
+
+        # Step 2: Create .env file if missing
         self.copy_env_file()
+
+        # Step 3: Generate Laravel APP_KEY
         self.generate_app_key()
+
+        # Step 4: Run database migrations and seeders
         self.migrate_database()
+
+        # Step 5 (optional): Install Laravel Passport for API authentication
         if use_passport:
             self.install_passport()
+
         print("✅ Laravel setup completed.")
+
 
