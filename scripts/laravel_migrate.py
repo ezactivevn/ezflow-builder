@@ -58,9 +58,14 @@ class Laravel:
         self.run_command(f"{self.php_path} artisan storage:link")
         print("✅ Storage link created.")
 
-    def setup_permissions(self, folder:str):
-        self.run_command(f"sudo chown -R www-data:www-data {folder}")
-        print("✅ Owner changed to www-data")
+    def setup_permissions(self, folder: str):
+        """Change ownership of folder to www-data."""
+        if os.path.exists(folder):
+            self.run_command(f"sudo chown -R www-data:www-data {folder}")
+            print(f"✅ Owner changed to www-data: {folder}")
+        else:
+            print(f"⚠️ Folder not found, skipping chown: {folder}")
+
 
     def full_setup(self, use_passport: bool = False) -> None:
         """Run full Laravel project setup."""
@@ -76,8 +81,8 @@ class Laravel:
 
         self.seed_database()
         self.storage_link()
-        self.setup_permissions(self.project_path +"/public")
-        self.setup_permissions(self.project_path +"/storage")
+        self.setup_permissions(os.path.join(self.project_path, "public"))
+        self.setup_permissions(os.path.join(self.project_path, "storage"))
 
 
         print("✅ Laravel setup completed.")
