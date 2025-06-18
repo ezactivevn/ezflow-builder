@@ -1,0 +1,35 @@
+name: 🚀 Laravel Deploy on Self-Hosted
+
+on:
+  workflow_dispatch:
+    inputs:
+      APP_ID:
+        description: 'Application ID to deploy'
+        required: true
+        default: 'my-laravel-app'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: ⚙️ Run Laravel Deployment Script
+        run: |
+          python scripts/_main.py
