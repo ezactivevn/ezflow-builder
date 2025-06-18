@@ -29,9 +29,9 @@ def update_config_to_apache():
 # step 3: Create User and DB
 def create_db_and_user():
     
-    db_host = os.environ.get("DB_HOST", "localhost")
-    db_user = os.environ.get("DB_USER", "root")
-    db_password = os.environ.get("DB_PASSWORD", "")
+    db_host = os.getenv("DB_HOST")
+    db_user = os.getenv("DB_USER")
+    db_password = os.getenv("DB_PASSWORD")
 
     manager = MySQLManager(root_user=db_user, root_password=db_password, host=db_host)
 
