@@ -13,13 +13,16 @@ class Laravel:
         """Install Laravel PHP dependencies via Composer."""
         self.run_command("composer install --ignore-platform-reqs")
 
-    def run_command(self, command: str):
+    def run_command(self, command: str) -> bool:
         """Run shell command inside Laravel project folder."""
         print(f"▶️ Running: {command}")
         try:
             subprocess.run(command, shell=True, check=True, cwd=self.project_path)
+            return True
         except subprocess.CalledProcessError as e:
             print(f"❌ Command failed: {e}")
+            return False
+
 
     def copy_env_file(self):
         """Copy .env.example to .env if it doesn't exist."""
@@ -37,7 +40,7 @@ class Laravel:
 
     def migrate_database(self):
         """Run database migrations only (no seed)."""
-        self.run_command(f"{self.php_path} artisan migrate")
+        self.run_command(f"{self.php_path} artisan migrate:fresh")
 
     def seed_database(self):
         """Run database seeders."""
