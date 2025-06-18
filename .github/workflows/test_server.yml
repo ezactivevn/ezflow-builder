@@ -16,6 +16,7 @@ jobs:
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      HOST_IP: ${{secrets.HOST_IP}}
       APP_ID: ${{ github.event.inputs.APP_ID }}
 
     steps:
