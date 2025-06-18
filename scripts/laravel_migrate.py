@@ -36,18 +36,22 @@ class Laravel:
         self.run_command(f"{self.php_path} artisan key:generate")
 
     def migrate_database(self):
-        """Run artisan migrate."""
-        self.run_command(f"{self.php_path} artisan migrate --seed")
+        """Run database migrations only (no seed)."""
+        self.run_command(f"{self.php_path} artisan migrate")
+
+    def seed_database(self):
+        """Run database seeders."""
+        self.run_command(f"{self.php_path} artisan db:seed")
 
     def install_passport(self):
         """Install Laravel Passport (optional)."""
-        self.run_command(f"{self.php_path} artisan migrate")
         self.run_command(f"{self.php_path} artisan passport:install")
         print("✅ Passport installed.")
 
 
     def full_setup(self, use_passport: bool = False) -> None:
         print("🚀 Starting Laravel setup...")
+
         # Step 1: Create .env file if missing
         self.copy_env_file()
 
@@ -57,13 +61,17 @@ class Laravel:
         # Step 3: Generate Laravel APP_KEY
         self.generate_app_key()
 
-        # Step 4: Run database migrations and seeders
+        # Step 4: Run database migrations
         self.migrate_database()
 
-        # Step 5 (optional): Install Laravel Passport for API authentication
+        # Step 5 (optional): Install Laravel Passport (requires oauth tables)
         if use_passport:
             self.install_passport()
 
+        # Step 6: Run database seeders (after passport is installed)
+        self.seed_database()
+
         print("✅ Laravel setup completed.")
+
 
 
