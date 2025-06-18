@@ -1,4 +1,5 @@
 import subprocess
+import tempfile
 
 class ApacheConfigurator:
     def __init__(self):
@@ -19,12 +20,10 @@ class ApacheConfigurator:
             with open(config_path, 'r') as file:
                 lines = file.readlines()
 
-            # Kiểm tra nếu alias đã tồn tại
             if any(f"Alias {alias_path}" in line for line in lines):
                 print("✅ Alias đã tồn tại.")
                 return
 
-            # Tạo khối Alias
             alias_block = (
                 f"\nAlias {alias_path} {alias_target}\n"
                 f"<Directory {alias_target}>\n"
@@ -34,7 +33,6 @@ class ApacheConfigurator:
                 f"</Directory>\n"
             )
 
-            # Chèn alias_block trước dòng có marker
             inserted = False
             for i, line in enumerate(lines):
                 if marker in line:
@@ -46,11 +44,14 @@ class ApacheConfigurator:
                 print("⚠️ Marker not found in config. Appending block at end.")
                 lines.append(alias_block)
 
-            # Cấp quyền ghi tạm thời rồi ghi file
-            self.run_command(f"sudo chmod +w {config_path}")
-            with open(config_path, 'w') as file:
-                file.writelines(lines)
-            self.run_command(f"sudo chmod -w {config_path}")
+            # Viết nội dung mới vào file tạm
+            with tempfile.NamedTemporaryFile('w', delete=False) as tmpfile:
+                tmpfile.writelines(lines)
+                tmpfile_path = tmpfile.name
+
+            # Ghi đè file config bằng sudo + tee
+            self.run_command(f"sudo tee {config_path} < {tmpfile_path}")
+
             print("✅ Đã cập nhật Apache config.")
 
         except Exception as e:
@@ -66,7 +67,7 @@ class ApacheConfigurator:
 
     def add_supervisor_config(self, app_name: str):
         """Thêm Supervisor config cho ứng dụng Laravel."""
-        source = f"/var/www/html/server/{app_name}/supervisor/laravel-worker.conf"
+        source = f"/var/www/html/{app_name}/server/supervisor/laravel-worker.conf"
         dest = f"/etc/supervisor/conf.d/{app_name}.conf"
         self.run_command(f"sudo cp {source} {dest}")
         print(f"✅ Đã thêm Supervisor config cho {app_name}")
