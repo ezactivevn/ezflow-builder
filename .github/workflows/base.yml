@@ -76,9 +76,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Install Firebase tools
-        run: npm install -g firebase-tools
-
       - name: Run Python script
         run: python runscript.py "${{ github.event.inputs.app_id }}" "${{ secrets.PAT_TOKEN }}" "${{ secrets.FIREBASE_TOKEN }}" "${{ github.actor }}" "${{ github.event.inputs.email }}"
         env: 
