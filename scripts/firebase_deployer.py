@@ -94,7 +94,7 @@ class FirebaseDeployer:
 
     def deploy(self, create_if_needed=False):
         print(f"📡 Starting Firebase deployment for: {self.site_id}")
-        self.install_firebase_tools()
+        # self.install_firebase_tools()
         self.install_dependencies()
         self.build_client()
 
