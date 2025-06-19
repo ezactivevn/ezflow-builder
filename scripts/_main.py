@@ -14,7 +14,16 @@ def parse_args():
     group.add_argument("--client-only", action="store_true", help="Only deploy Firebase client")
 
     parser.add_argument("--create-firebase-site", action="store_true", help="Create Firebase site if not exists")
-    return parser.parse_args()
+
+    args = parser.parse_args()
+
+    flags = {
+        "is_laravel": args.laravel_only or (not args.laravel_only and not args.client_only),
+        "is_client": args.client_only or (not args.laravel_only and not args.client_only),
+        "create_firebase_site": args.create_firebase_site
+    }
+
+    return flags
 
 
 def generate_site_id(app_id: str) -> str:
@@ -33,18 +42,14 @@ def main():
 
     print("🔨 Starting deployment process...")
 
-    # 🧠 Determine which parts to run
-    is_laravel = args.laravel_only or (not args.laravel_only and not args.client_only)
-    is_client = args.client_only or (not args.laravel_only and not args.client_only)
+    print(args)
 
-    # 🚀 Laravel Deploy
-    if is_laravel:
+    if args["is_laravel"]:
         print("🚀 Step 1: Laravel Deploy")
         laravel = LaravelDeployer(app_id)
         laravel.deploy(skip_clone=True)
 
-    # 🌐 Firebase Deploy
-    if is_client:
+    elif args["is_client"]:
         if not firebase_token:
             raise EnvironmentError("❌ Missing FIREBASE_TOKEN for Firebase deployment")
 
@@ -52,7 +57,7 @@ def main():
         print(f"🆔 Generated Firebase site_id: {site_id}")
 
         firebase = FirebaseDeployer(site_id=site_id, firebase_token=firebase_token)
-        firebase.deploy(create_if_needed=args.create_firebase_site)
+        firebase.deploy(create_if_needed=args["create_firebase_site"])
 
     print("🎉 Deployment steps completed successfully.")
 
