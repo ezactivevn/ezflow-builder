@@ -2,8 +2,8 @@ import os
 import sys
 import argparse
 from datetime import datetime
-from deployers.laravel_deployer import LaravelDeployer
-from deployers.firebase_deployer import FirebaseDeployer
+from laravel_deployer import LaravelDeployer
+from firebase_deployer import FirebaseDeployer
 
 
 def parse_args():
