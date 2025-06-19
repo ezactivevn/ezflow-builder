@@ -12,7 +12,9 @@ class FirebaseDeployer:
         if not self.site_id:
             raise ValueError("❌ Missing site_id or APP_ID.")
 
-        self.client_path = "client"
+        self.app_id = os.getenv("APP_ID")
+        self.target_dir = f"/var/www/html/{self.app_id}"
+        self.client_path = os.path.join(self.target_dir, "client")
 
     def check_node_modules(self):
         return os.path.isdir(os.path.join(self.client_path, "node_modules")) and \

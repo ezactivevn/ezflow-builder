@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: 🧹 Remove old folder (if any)
         run: |
-          rm -rf /var/www/html/${APP_ID}
+         sudo rm -rf /var/www/html/${APP_ID} --force
 
       - name: 📥 Clone repo
         run: |
