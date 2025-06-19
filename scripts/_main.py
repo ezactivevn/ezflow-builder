@@ -8,8 +8,10 @@ from firebase_deployer import FirebaseDeployer
 
 def parse_args():
     parser = argparse.ArgumentParser(description="🔥 Full deploy script for Laravel & Firebase client")
-    parser.add_argument("--with-client", action="store_true", help="Also deploy the Firebase client app")
-    parser.add_argument("--no-client", action="store_true", help="Skip client deploy")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--laravel-only", action="store_true", help="Only deploy Laravel backend")
+    group.add_argument("--client-only", action="store_true", help="Only deploy Firebase client")
+
     parser.add_argument("--create-firebase-site", action="store_true", help="Create Firebase site if not exists")
     return parser.parse_args()
 
@@ -30,14 +32,14 @@ def main():
 
     print("🔨 Starting deployment process...")
 
-    # Step 1: Laravel Deploy
-    print("🚀 Step 1: Laravel Deploy")
-    laravel = LaravelDeployer(app_id)
-    laravel.deploy()
+    # 🔧 Laravel Deploy (trừ khi client-only)
+    if not args.client_only:
+        print("🚀 Step 1: Laravel Deploy")
+        laravel = LaravelDeployer(app_id)
+        laravel.deploy()
 
-    # Step 2: Firebase Client Deploy (Optional)
-    if args.with_client and not args.no_client:
-        print("🌐 Step 2: Firebase Hosting Deploy")
+    # 🌐 Firebase Deploy (trừ khi laravel-only)
+    if not args.laravel_only:
         if not firebase_token:
             raise EnvironmentError("❌ Missing FIREBASE_TOKEN for Firebase deployment")
 
@@ -47,7 +49,7 @@ def main():
         firebase = FirebaseDeployer(site_id=site_id, firebase_token=firebase_token)
         firebase.deploy(create_if_needed=args.create_firebase_site)
 
-    print("🎉 All deployment steps completed successfully.")
+    print("🎉 Deployment steps completed successfully.")
 
 
 if __name__ == "__main__":

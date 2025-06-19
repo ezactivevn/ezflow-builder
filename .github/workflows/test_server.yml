@@ -24,7 +24,7 @@ jobs:
 
       - name: 🐍 Run Laravel Deployment Script
         run: |
-          python3 scripts/_main.py --no-client
+          python3 scripts/_main.py --laravel-only
 
   deploy_client:
     name: 🌐 Deploy Firebase Client
@@ -40,4 +40,4 @@ jobs:
 
       - name: 🚀 Run Firebase Client Deployment Script
         run: |
-          python3 scripts/_main.py --with-client --create-firebase-site
+          python3 scripts/_main.py --client-only --create-firebase-site
