@@ -37,6 +37,9 @@ jobs:
       DB_PASS: ${{ secrets.DB_PASSWORD }}
 
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
       - name: 🐍 Laravel Deploy Script
         run: |
           python3 scripts/_main.py --laravel-only
@@ -50,6 +53,9 @@ jobs:
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
       - name: 🚀 Firebase Deploy Script
         run: |
           python3 scripts/_main.py --client-only --create-firebase-site
