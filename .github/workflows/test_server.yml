@@ -1,4 +1,4 @@
-name: 🚀 Laravel Deploy on Self-Hosted
+name: 🚀 Laravel + Firebase Client (Parallel)
 
 on:
   workflow_dispatch:
@@ -9,19 +9,35 @@ on:
         default: 'my-laravel-app'
 
 jobs:
-  deploy:
+  deploy_laravel:
+    name: 🔧 Deploy Laravel App
     runs-on: self-hosted
-
     env:
+      APP_ID: ${{ github.event.inputs.APP_ID }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASS: ${{ secrets.DB_PASSWORD }}
-      APP_ID: ${{ github.event.inputs.APP_ID }}
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ Run Laravel Deployment Script
+      - name: 🐍 Run Laravel Deployment Script
         run: |
-          python3 scripts/_main.py
+          python3 scripts/_main.py --no-client
+
+  deploy_client:
+    name: 🌐 Deploy Firebase Client
+    runs-on: self-hosted
+    needs: []  # Chạy song song luôn, nếu cần đợi Laravel thì đổi thành: needs: deploy_laravel
+    env:
+      APP_ID: ${{ github.event.inputs.APP_ID }}
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🚀 Run Firebase Client Deployment Script
+        run: |
+          python3 scripts/_main.py --with-client --create-firebase-site
