@@ -1,4 +1,4 @@
-name: 🚀 Laravel + Firebase Deploy (Parallel)
+name: 🚀 Laravel + Firebase Deploy (Parallel & Safe)
 
 on:
   workflow_dispatch:
@@ -9,10 +9,27 @@ on:
         default: 'my-laravel-app'
 
 jobs:
-  deploy_laravel:
-    name: 🔧 Deploy Laravel App
+  checkout_code:
+    name: 📦 Clone Repo & Prepare Code
     runs-on: self-hosted
+    env:
+      APP_ID: ${{ github.event.inputs.APP_ID }}
 
+    steps:
+      - name: 🧹 Remove old folder (if any)
+        run: |
+          rm -rf /var/www/html/${APP_ID}
+
+      - name: 📥 Clone repo
+        run: |
+          git clone https://github.com/ezactivevn/ezleague-core.git /var/www/html/${APP_ID}
+          cd /var/www/html/${APP_ID}
+          git checkout ezleague/${APP_ID}
+
+  deploy_laravel:
+    name: 🔧 Deploy Laravel Backend
+    runs-on: self-hosted
+    needs: checkout_code
     env:
       APP_ID: ${{ github.event.inputs.APP_ID }}
       DB_HOST: ${{ secrets.DB_HOST }}
@@ -20,28 +37,19 @@ jobs:
       DB_PASS: ${{ secrets.DB_PASSWORD }}
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 🐍 Laravel Deployment Script
+      - name: 🐍 Laravel Deploy Script
         run: |
-          echo "🔧 Deploying Laravel for $APP_ID"
           python3 scripts/_main.py --laravel-only
 
   deploy_client:
     name: 🌐 Deploy Firebase Client
     runs-on: self-hosted
-
-    # ❌ Không có 'needs:' → chạy song song luôn
+    needs: checkout_code
     env:
       APP_ID: ${{ github.event.inputs.APP_ID }}
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 🚀 Firebase Deployment Script
+      - name: 🚀 Firebase Deploy Script
         run: |
-          echo "🌐 Deploying Firebase client for $APP_ID"
           python3 scripts/_main.py --client-only --create-firebase-site

@@ -63,10 +63,14 @@ class LaravelDeployer:
         laravel.full_setup(use_passport=True)
         print("✅ Laravel setup complete.")
 
-    def deploy(self):
+    def deploy(self, skip_clone=False):
         print(f"🚀 Starting deployment for app: {self.app_id}")
-        self.clone_repository()
+
+        if not skip_clone:
+            self.clone_repository()
+
         self.update_apache_config()
         self.create_database_and_user()
         self.migrate_and_seed()
         print(f"🎉 Deployment for {self.app_id} completed successfully.")
+

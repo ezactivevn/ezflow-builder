@@ -41,7 +41,7 @@ def main():
     if is_laravel:
         print("🚀 Step 1: Laravel Deploy")
         laravel = LaravelDeployer(app_id)
-        laravel.deploy()
+        laravel.deploy(skip_clone=True)
 
     # 🌐 Firebase Deploy
     if is_client:
