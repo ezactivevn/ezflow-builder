@@ -44,22 +44,22 @@ def main():
 
     print(args["is_laravel"])
 
-    # if args["is_laravel"]:
-    #     print("🚀 Step 1: Laravel Deploy")
-    #     laravel = LaravelDeployer(app_id)
-    #     laravel.deploy(skip_clone=True)
+    if args["is_laravel"]:
+        print("🚀 Step 1: Laravel Deploy")
+        laravel = LaravelDeployer(app_id)
+        laravel.deploy(skip_clone=True)
 
-    # elif args["is_client"]:
-    #     if not firebase_token:
-    #         raise EnvironmentError("❌ Missing FIREBASE_TOKEN for Firebase deployment")
+    elif args["is_client"]:
+        if not firebase_token:
+            raise EnvironmentError("❌ Missing FIREBASE_TOKEN for Firebase deployment")
 
-    #     site_id = generate_site_id(app_id)
-    #     print(f"🆔 Generated Firebase site_id: {site_id}")
+        site_id = generate_site_id(app_id)
+        print(f"🆔 Generated Firebase site_id: {site_id}")
 
-    #     firebase = FirebaseDeployer(site_id=site_id, firebase_token=firebase_token)
-    #     firebase.deploy(create_if_needed=args["create_firebase_site"])
+        firebase = FirebaseDeployer(site_id=site_id, firebase_token=firebase_token)
+        firebase.deploy(create_if_needed=args["create_firebase_site"])
 
-    # print("🎉 Deployment steps completed successfully.")
+    print("🎉 Deployment steps completed successfully.")
 
 
 if __name__ == "__main__":
